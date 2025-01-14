@@ -41,11 +41,14 @@ export async function handleEvent(event: CosmosEvent): Promise<void> {
     const baseDecoded = Buffer.from(attr.value.toString(), "base64").toString(
       "utf-8"
     );
+    const baseDecodedKey = Buffer.from(attr.key.toString(), "base64").toString(
+      "utf-8"
+    );
 
     logger.info(
-      ` ${event.event.type}::  ATTR MSG ${
-        attr.key
-      } ::: ${baseDecoded.toString()}`
+      ` ${
+        event.event.type
+      }::  ATTR MSG ${baseDecodedKey} ::: ${baseDecoded.toString()}`
     );
   });
 }
