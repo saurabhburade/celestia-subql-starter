@@ -5,6 +5,7 @@ import {
   CosmosMessage,
   CosmosTransaction,
 } from "@subql/types-cosmos";
+import { base64FromBytes } from "../types/proto-interfaces/helpers";
 
 /*
 export async function handleBlock(block: CosmosBlock): Promise<void> {
@@ -47,9 +48,9 @@ export async function handleEvent(event: CosmosEvent): Promise<void> {
   });
 }
 export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
-  // tx.decodedTx.body.messages.forEach((msg) => {
-  //   logger.info(`TXN MSG ${msg.typeUrl} ::: ${msg.value.toString()}`);
-  // });
+  tx.decodedTx.body.messages.forEach((msg) => {
+    logger.info(`TXN MSG ${msg.typeUrl} ::: ${base64FromBytes(msg.value)}`);
+  });
 }
 //   newTransfers.blockHeight = BigInt(event.block.block.header.height);
 //   newTransfers.txHash = event.tx.hash;
