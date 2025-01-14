@@ -22,3 +22,29 @@ type Transfers @entity {
   amount: String
   denomination: String
 }
+
+type BlockData @entity {
+  id: ID!
+  hash: String! @index
+  height: Float! @index
+  proposer: String!
+  totalBlobSize: Float!
+  totalSquareSize: Float!
+
+  totalEventsCount: Float!
+
+  totalBlobTransactionCount: Float!
+
+  totalTransactionCount: Float!
+
+  avgTIAPrice: Float!
+  currentTIAPrice: Float!
+  totalBlockFeeTIA: Float!
+  totalBlockFeeUSD: Float!
+
+  timestamp: Float
+  # totalNamespacesAccounts: Float
+  # totalTransactionCountLegacy: Float!
+  # totalTransactionCountAccessList: Float!
+  # totalTransactionCountDynamicFee: Float!
+}

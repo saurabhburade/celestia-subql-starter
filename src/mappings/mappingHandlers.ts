@@ -36,7 +36,7 @@ export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
 */
 
 export async function handleEvent(event: CosmosEvent): Promise<void> {
-  logger.info(`Found transfer event at ${event.event.attributes}`);
+  logger.info(`Found event for ${event.event.type}`);
   event.event.attributes.forEach((attr) => {
     const baseDecoded = Buffer.from(attr.value.toString(), "base64").toString(
       "utf-8"
@@ -45,12 +45,10 @@ export async function handleEvent(event: CosmosEvent): Promise<void> {
       "utf-8"
     );
 
-    logger.info(
-      ` ${
-        event.event.type
-      }::  ATTR MSG ${baseDecodedKey} ::: ${baseDecoded.toString()}`
-    );
+    logger.info(` ${event.event.type}::  ATTR MSG ${baseDecodedKey} `);
   });
+
+  // Handle Blob Event
 }
 export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
   tx.decodedTx.body.messages.forEach((msg) => {
