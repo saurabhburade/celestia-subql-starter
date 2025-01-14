@@ -1,11 +1,9 @@
-import { Transfers } from "../types";
 import {
   CosmosEvent,
   CosmosBlock,
   CosmosMessage,
   CosmosTransaction,
 } from "@subql/types-cosmos";
-import { base64FromBytes } from "../types/proto-interfaces/helpers";
 
 /*
 export async function handleBlock(block: CosmosBlock): Promise<void> {
@@ -40,16 +38,19 @@ export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
 export async function handleEvent(event: CosmosEvent): Promise<void> {
   logger.info(`Found transfer event at ${event.event.attributes}`);
   event.event.attributes.forEach((attr) => {
+    const baseDecoded = Buffer.from(attr.value.toString()).toString("utf-8");
+
     logger.info(
       ` ${event.event.type}::  ATTR MSG ${
         attr.key
-      } ::: ${attr.value.toString()}`
+      } ::: ${baseDecoded.toString()}`
     );
   });
 }
 export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
   tx.decodedTx.body.messages.forEach((msg) => {
-    logger.info(`TXN MSG ${msg.typeUrl} ::: ${base64FromBytes(msg.value)}`);
+    const base = Buffer.from(msg.value).toString("utf-8");
+    logger.info(`TXN MSG ${msg.typeUrl} ::: ${base}`);
   });
 }
 //   newTransfers.blockHeight = BigInt(event.block.block.header.height);
