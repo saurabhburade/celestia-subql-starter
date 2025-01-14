@@ -13,13 +13,16 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
 */
 export async function handleBlock(block: CosmosBlock): Promise<void> {
   // If you want to index each block in Cosmos (CosmosHub), you could do that here
-  logger.info(`BLOCK ::  ${block?.block?.header?.height}`);
+  const height = block?.block?.header?.height;
   const txs = block.txs;
-  txs.forEach((tx) => {
-    logger.info(`EVENTS ::  ${JSON.stringify(tx?.events)}`);
-    logger.info(`LOGS ::  ${JSON.stringify(tx?.log)}`);
-    logger.info(`DATA ::  ${JSON.stringify(tx?.data)}`);
-  });
+  if (height === 199552) {
+    logger.info(`BLOCK ::  ${height}`);
+    txs.forEach((tx) => {
+      logger.info(`EVENTS ::  ${JSON.stringify(tx?.events)}`);
+      logger.info(`LOGS ::  ${JSON.stringify(tx?.log)}`);
+      logger.info(`DATA ::  ${JSON.stringify(tx?.data)}`);
+    });
+  }
 }
 /*
 export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
