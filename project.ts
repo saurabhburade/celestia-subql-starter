@@ -84,14 +84,10 @@ const project: CosmosProject = {
             handler: "handleBlock",
             kind: CosmosHandlerKind.Block,
           },
-
-          //{
-          //  handler: "handleMessage",
-          //  kind: CosmosHandlerKind.Message,
-          //  filter: {
-          //    type: "/cosmos.bank.v1beta1.MsgSend",
-          //  },
-          //},
+          {
+            handler: "handleTransaction",
+            kind: CosmosHandlerKind.Transaction,
+          },
         ],
       },
     },

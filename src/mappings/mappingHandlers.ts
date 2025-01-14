@@ -13,16 +13,16 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
 */
 export async function handleBlock(block: CosmosBlock): Promise<void> {
   // If you want to index each block in Cosmos (CosmosHub), you could do that here
-  const height = block?.block?.header?.height;
-  const txs = block.txs;
-  if (height === 199552) {
-    logger.info(`BLOCK ::  ${height}`);
-    txs.forEach((tx) => {
-      logger.info(`EVENTS ::  ${JSON.stringify(tx?.events)}`);
-      logger.info(`LOGS ::  ${JSON.stringify(tx?.log)}`);
-      logger.info(`DATA ::  ${JSON.stringify(tx?.data)}`);
-    });
-  }
+  // const height = block?.block?.header?.height;
+  // const txs = block.txs;
+  // if (height === 199552) {
+  //   logger.info(`BLOCK ::  ${height}`);
+  //   txs.forEach((tx) => {
+  //     logger.info(`EVENTS ::  ${JSON.stringify(tx?.events)}`);
+  //     logger.info(`LOGS ::  ${JSON.stringify(tx?.log)}`);
+  //     logger.info(`DATA ::  ${JSON.stringify(tx?.data)}`);
+  //   });
+  // }
 }
 /*
 export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
@@ -37,11 +37,16 @@ export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
 */
 
 // export async function handleEvent(event: CosmosEvent): Promise<void> {
-//   logger.info(`Found transfer event at ${event.block.blockId}`);
+//   logger.info(`Found transfer event at ${event.block.block}`);
 //   const newTransfers = new Transfers(
 //     `${event.tx.hash}-${event.msg.idx}-${event.idx}`
 //   );
-
+// }
+export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
+  tx.decodedTx.body.messages.forEach((msg) => {
+    logger.info(`TXN MSG ${msg.typeUrl} ::: ${msg.value}`);
+  });
+}
 //   newTransfers.blockHeight = BigInt(event.block.block.header.height);
 //   newTransfers.txHash = event.tx.hash;
 //   newTransfers.fromAddress = event.msg.msg.decodedMsg.fromAddress;
