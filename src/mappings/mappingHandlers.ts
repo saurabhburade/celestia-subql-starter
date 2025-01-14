@@ -37,6 +37,10 @@ export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
 
 export async function handleEvent(event: CosmosEvent): Promise<void> {
   logger.info(`Found event for ${event.event.type}`);
+  if (event.event.type === "celestia.blob.v1.EventPayForBlobs") {
+    logger.info(` ${event.event.type}:: BLOBS `);
+    await setTimeout(() => {}, 10000);
+  }
   event.event.attributes.forEach((attr) => {
     const baseDecoded = Buffer.from(attr.value.toString(), "base64").toString(
       "utf-8"
@@ -44,8 +48,11 @@ export async function handleEvent(event: CosmosEvent): Promise<void> {
     const baseDecodedKey = Buffer.from(attr.key.toString(), "base64").toString(
       "utf-8"
     );
-
-    logger.info(` ${event.event.type}::  ATTR MSG ${baseDecodedKey} `);
+    if (baseDecodedKey === "celestia.blob.v1.EventPayForBlobs") {
+      logger.info(
+        ` ${event.event.type}::  ATTR MSG ${baseDecodedKey} ::: ${baseDecodedKey} `
+      );
+    }
   });
 
   // Handle Blob Event

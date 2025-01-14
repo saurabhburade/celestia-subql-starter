@@ -73,9 +73,9 @@ const project: CosmosProject = {
           {
             handler: "handleEvent",
             kind: CosmosHandlerKind.Event,
-            filter: {
-              type: "celestia.blob.v1.EventPayForBlobs",
-            },
+            // filter: {
+            //   type: "celestia.blob.v1.EventPayForBlobs",
+            // },
           },
           // {
           //   handler: "handleBlock",
