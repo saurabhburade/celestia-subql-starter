@@ -36,16 +36,20 @@ export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
 }
 */
 
-// export async function handleEvent(event: CosmosEvent): Promise<void> {
-//   logger.info(`Found transfer event at ${event.block.block}`);
-//   const newTransfers = new Transfers(
-//     `${event.tx.hash}-${event.msg.idx}-${event.idx}`
-//   );
-// }
-export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
-  tx.decodedTx.body.messages.forEach((msg) => {
-    logger.info(`TXN MSG ${msg.typeUrl} ::: ${msg.value.toString()}`);
+export async function handleEvent(event: CosmosEvent): Promise<void> {
+  logger.info(`Found transfer event at ${event.event.attributes}`);
+  event.event.attributes.forEach((attr) => {
+    logger.info(
+      ` ${event.event.type}::  ATTR MSG ${
+        attr.key
+      } ::: ${attr.value.toString()}`
+    );
   });
+}
+export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
+  // tx.decodedTx.body.messages.forEach((msg) => {
+  //   logger.info(`TXN MSG ${msg.typeUrl} ::: ${msg.value.toString()}`);
+  // });
 }
 //   newTransfers.blockHeight = BigInt(event.block.block.header.height);
 //   newTransfers.txHash = event.tx.hash;

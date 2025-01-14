@@ -70,16 +70,10 @@ const project: CosmosProject = {
       mapping: {
         file: "./dist/index.js",
         handlers: [
-          // {
-          //   handler: "handleEvent",
-          //   kind: CosmosHandlerKind.Event,
-          //   filter: {
-          //     type: "transfer",
-          //     messageFilter: {
-          //       type: "/cosmos.bank.v1beta1.MsgSend",
-          //     },
-          //   },
-          // },
+          {
+            handler: "handleEvent",
+            kind: CosmosHandlerKind.Event,
+          },
           {
             handler: "handleBlock",
             kind: CosmosHandlerKind.Block,
