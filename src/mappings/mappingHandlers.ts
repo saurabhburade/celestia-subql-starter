@@ -44,7 +44,7 @@ export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
 // }
 export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
   tx.decodedTx.body.messages.forEach((msg) => {
-    logger.info(`TXN MSG ${msg.typeUrl} ::: ${msg.value}`);
+    logger.info(`TXN MSG ${msg.typeUrl} ::: ${msg.value.toString()}`);
   });
 }
 //   newTransfers.blockHeight = BigInt(event.block.block.header.height);
