@@ -39,34 +39,34 @@ const project: CosmosProject = {
       "https://public-celestia-rpc.numia.xyz",
       "https://celestia-rpc.mesa.newmetric.xyz",
     ],
-    chaintypes: new Map([
-      [
-        "cosmos.slashing.v1beta1",
-        {
-          file: "./proto/cosmos/slashing/v1beta1/tx.proto",
-          messages: ["MsgUnjail"],
-        },
-      ],
-      [
-        "cosmos.gov.v1beta1",
-        {
-          file: "./proto/cosmos/gov/v1beta1/tx.proto",
-          messages: ["MsgVoteWeighted"],
-        },
-      ],
-      [
-        "cosmos.gov.v1beta1.gov",
-        {
-          file: "./proto/cosmos/gov/v1beta1/gov.proto",
-          messages: ["WeightedVoteOption"],
-        },
-      ],
-    ]),
+    // chaintypes: new Map([
+    //   [
+    //     "cosmos.slashing.v1beta1",
+    //     {
+    //       file: "./proto/cosmos/slashing/v1beta1/tx.proto",
+    //       messages: ["MsgUnjail"],
+    //     },
+    //   ],
+    //   [
+    //     "cosmos.gov.v1beta1",
+    //     {
+    //       file: "./proto/cosmos/gov/v1beta1/tx.proto",
+    //       messages: ["MsgVoteWeighted"],
+    //     },
+    //   ],
+    //   [
+    //     "cosmos.gov.v1beta1.gov",
+    //     {
+    //       file: "./proto/cosmos/gov/v1beta1/gov.proto",
+    //       messages: ["WeightedVoteOption"],
+    //     },
+    //   ],
+    // ]),
   },
   dataSources: [
     {
       kind: CosmosDatasourceKind.Runtime,
-      startBlock: 199377,
+      startBlock: 199550,
       mapping: {
         file: "./dist/index.js",
         handlers: [
@@ -81,7 +81,7 @@ const project: CosmosProject = {
           //   },
           // },
           {
-            handler: "handleTransaction",
+            handler: "handleBlock",
             kind: CosmosHandlerKind.Block,
           },
 

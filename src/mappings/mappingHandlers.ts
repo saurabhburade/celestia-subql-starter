@@ -11,7 +11,10 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
   // If you want to index each block in Cosmos (CosmosHub), you could do that here
 }
 */
-
+export async function handleBlock(block: CosmosBlock): Promise<void> {
+  // If you want to index each block in Cosmos (CosmosHub), you could do that here
+  logger.info(`BLOCK ::  ${block?.block?.header?.height}`);
+}
 /*
 export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
   // If you want to index each transaction in Cosmos (CosmosHub), you could do that here
@@ -24,29 +27,29 @@ export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
 }
 */
 
-export async function handleEvent(event: CosmosEvent): Promise<void> {
-  logger.info(`Found transfer event at ${event.block.blockId}`);
-  const newTransfers = new Transfers(
-    `${event.tx.hash}-${event.msg.idx}-${event.idx}`
-  );
+// export async function handleEvent(event: CosmosEvent): Promise<void> {
+//   logger.info(`Found transfer event at ${event.block.blockId}`);
+//   const newTransfers = new Transfers(
+//     `${event.tx.hash}-${event.msg.idx}-${event.idx}`
+//   );
 
-  newTransfers.blockHeight = BigInt(event.block.block.header.height);
-  newTransfers.txHash = event.tx.hash;
-  newTransfers.fromAddress = event.msg.msg.decodedMsg.fromAddress;
-  newTransfers.toAddress = event.msg.msg.decodedMsg.toAddress;
-  newTransfers.amount = event.msg.msg.decodedMsg.amount;
-  newTransfers.denomination = event.msg.msg.decodedMsg.denomination;
+//   newTransfers.blockHeight = BigInt(event.block.block.header.height);
+//   newTransfers.txHash = event.tx.hash;
+//   newTransfers.fromAddress = event.msg.msg.decodedMsg.fromAddress;
+//   newTransfers.toAddress = event.msg.msg.decodedMsg.toAddress;
+//   newTransfers.amount = event.msg.msg.decodedMsg.amount;
+//   newTransfers.denomination = event.msg.msg.decodedMsg.denomination;
 
-  await newTransfers.save();
-}
-// export async function handleBlock(block: any): Promise<void> {
-//   logger.info(`Found Block at ${block.block.header.height.toString()}`);
-//   // const txns = block.txs;
-//   // txns.forEach((tx) => {
-//   //   logger.info(`TX DATA ${tx.log?.toString()}`);
-//   // });
+//   await newTransfers.save();
 // }
-export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
-  logger.info(`TX DATA ${tx?.decodedTx?.body?.messages?.length}`);
-  logger.info(`BLOCK ::  ${tx?.block?.block?.header?.height}`);
-}
+// // export async function handleBlock(block: any): Promise<void> {
+// //   logger.info(`Found Block at ${block.block.header.height.toString()}`);
+// //   // const txns = block.txs;
+// //   // txns.forEach((tx) => {
+// //   //   logger.info(`TX DATA ${tx.log?.toString()}`);
+// //   // });
+// // }
+// export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
+//   logger.info(`TX DATA ${tx?.decodedTx?.body?.messages?.length}`);
+//   logger.info(`BLOCK ::  ${tx?.block?.block?.header?.height}`);
+// }
