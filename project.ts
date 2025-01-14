@@ -37,7 +37,7 @@ const project: CosmosProject = {
      */
     endpoint: [
       "https://public-celestia-rpc.numia.xyz",
-      "https://celestia-rpc.mesa.newmetric.xyz",
+      // "https://celestia-rpc.mesa.newmetric.xyz",
     ],
     // chaintypes: new Map([
     //   [
