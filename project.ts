@@ -74,14 +74,14 @@ const project: CosmosProject = {
             handler: "handleEvent",
             kind: CosmosHandlerKind.Event,
           },
-          {
-            handler: "handleBlock",
-            kind: CosmosHandlerKind.Block,
-          },
-          {
-            handler: "handleTransaction",
-            kind: CosmosHandlerKind.Transaction,
-          },
+          // {
+          //   handler: "handleBlock",
+          //   kind: CosmosHandlerKind.Block,
+          // },
+          // {
+          //   handler: "handleTransaction",
+          //   kind: CosmosHandlerKind.Transaction,
+          // },
         ],
       },
     },
