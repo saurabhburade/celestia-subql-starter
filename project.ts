@@ -81,10 +81,10 @@ const project: CosmosProject = {
           //   handler: "handleBlock",
           //   kind: CosmosHandlerKind.Block,
           // },
-          {
-            handler: "handleTransaction",
-            kind: CosmosHandlerKind.Transaction,
-          },
+          // {
+          //   handler: "handleTransaction",
+          //   kind: CosmosHandlerKind.Transaction,
+          // },
         ],
       },
     },
