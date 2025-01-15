@@ -77,10 +77,10 @@ const project: CosmosProject = {
             //   type: "celestia.blob.v1.EventPayForBlobs",
             // },
           },
-          // {
-          //   handler: "handleBlock",
-          //   kind: CosmosHandlerKind.Block,
-          // },
+          {
+            handler: "handleBlock",
+            kind: CosmosHandlerKind.Block,
+          },
           // {
           //   handler: "handleTransaction",
           //   kind: CosmosHandlerKind.Transaction,

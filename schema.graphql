@@ -43,8 +43,4 @@ type BlockData @entity {
   totalBlockFeeUSD: Float!
 
   timestamp: Float
-  # totalNamespacesAccounts: Float
-  # totalTransactionCountLegacy: Float!
-  # totalTransactionCountAccessList: Float!
-  # totalTransactionCountDynamicFee: Float!
 }

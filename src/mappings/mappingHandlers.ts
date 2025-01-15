@@ -4,6 +4,7 @@ import {
   CosmosMessage,
   CosmosTransaction,
 } from "@subql/types-cosmos";
+import { getDecodedTxData } from "../utils/decodeBlockTx";
 
 /*
 export async function handleBlock(block: CosmosBlock): Promise<void> {
@@ -12,16 +13,18 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
 */
 export async function handleBlock(block: CosmosBlock): Promise<void> {
   // If you want to index each block in Cosmos (CosmosHub), you could do that here
-  // const height = block?.block?.header?.height;
-  // const txs = block.txs;
-  // if (height === 199552) {
-  //   logger.info(`BLOCK ::  ${height}`);
-  //   txs.forEach((tx) => {
-  //     logger.info(`EVENTS ::  ${JSON.stringify(tx?.events)}`);
-  //     logger.info(`LOGS ::  ${JSON.stringify(tx?.log)}`);
-  //     logger.info(`DATA ::  ${JSON.stringify(tx?.data)}`);
-  //   });
-  // }
+  const height = block?.block?.header?.height;
+  const txs = block.txs;
+
+  logger.info(`BLOCK ::  ${height}`);
+  txs.forEach((tx) => {
+    const decodedTx = getDecodedTxData(tx);
+    logger.info(`Bytes ::  ${decodedTx?.totalBytes}`);
+    logger.info(`nNamespaces ::  ${decodedTx.namespaces?.length}`);
+    logger.info(`nEvents ::   ${decodedTx.decodedEvents?.length}`);
+    logger.info(`nMsg ::   ${decodedTx.nMessages}`);
+    logger.info(`TxFee ::   ${decodedTx.txFee}`);
+  });
 }
 /*
 export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
@@ -36,26 +39,25 @@ export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
 */
 
 export async function handleEvent(event: CosmosEvent): Promise<void> {
-  logger.info(`Found event for ${event.event.type}`);
-  if (event.event.type === "celestia.blob.v1.EventPayForBlobs") {
-    logger.info(` ${event.event.type}:: BLOBS `);
-    // await setTimeout(() => {}, 10000);
-    event.event.attributes.forEach((attr) => {
-      const baseDecoded = Buffer.from(attr.value.toString(), "base64").toString(
-        "utf-8"
-      );
-      const baseDecodedKey = Buffer.from(
-        attr.key.toString(),
-        "base64"
-      ).toString("utf-8");
-      if (baseDecodedKey === "celestia.blob.v1.EventPayForBlobs") {
-        logger.info(
-          ` ${event.event.type}::  ATTR MSG ${baseDecodedKey} ::: ${baseDecodedKey} `
-        );
-      }
-    });
-  }
-
+  // logger.info(`Found event for ${event.event.type}`);
+  // if (event.event.type === "celestia.blob.v1.EventPayForBlobs") {
+  //   logger.info(` ${event.event.type}:: BLOBS `);
+  //   // await setTimeout(() => {}, 10000);
+  //   event.event.attributes.forEach((attr) => {
+  //     const baseDecoded = Buffer.from(attr.value.toString(), "base64").toString(
+  //       "utf-8"
+  //     );
+  //     const baseDecodedKey = Buffer.from(
+  //       attr.key.toString(),
+  //       "base64"
+  //     ).toString("utf-8");
+  //     if (baseDecodedKey === "celestia.blob.v1.EventPayForBlobs") {
+  //       logger.info(
+  //         ` ${event.event.type}::  ATTR MSG ${baseDecodedKey} ::: ${baseDecodedKey} `
+  //       );
+  //     }
+  //   });
+  // }
   // Handle Blob Event
 }
 export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
