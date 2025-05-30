@@ -71,11 +71,11 @@ const project: CosmosProject = {
         file: "./dist/index.js",
         handlers: [
           {
-            handler: "handleEvent",
-            kind: CosmosHandlerKind.Event,
-            // filter: {
-            //   type: "celestia.blob.v1.EventPayForBlobs",
-            // },
+            handler: "handleMessage",
+            kind: CosmosHandlerKind.Message,
+            filter: {
+              type: "celestia.blob.v1.MsgPayForBlobs",
+            },
           },
           {
             handler: "handleBlock",

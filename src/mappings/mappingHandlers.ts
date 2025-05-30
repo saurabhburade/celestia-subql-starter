@@ -66,6 +66,14 @@ export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
   //   logger.info(`TXN MSG ${msg.typeUrl} ::: ${base}`);
   // });
 }
+
+export async function handleMessage(msg: CosmosMessage): Promise<void> {
+  logger.info(`Found message for ${JSON.stringify(msg.msg.decodedMsg)}`);
+  // tx.decodedTx.body.messages.forEach((msg) => {
+  //   const base = Buffer.from(msg.value).toString("utf-8");
+  //   logger.info(`TXN MSG ${msg.typeUrl} ::: ${base}`);
+  // });
+}
 //   newTransfers.blockHeight = BigInt(event.block.block.header.height);
 //   newTransfers.txHash = event.tx.hash;
 //   newTransfers.fromAddress = event.msg.msg.decodedMsg.fromAddress;
