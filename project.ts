@@ -36,7 +36,8 @@ const project: CosmosProject = {
      * These settings can be found in your docker-compose.yaml, they will slow indexing but prevent your project being rate limited
      */
     endpoint: [
-      "https://public-celestia-rpc.numia.xyz",
+      "https://celestia.cumulo.org.es",
+      // "https://public-celestia-rpc.numia.xyz",
       // "https://celestia-rpc.mesa.newmetric.xyz",
     ],
     // chaintypes: new Map([
