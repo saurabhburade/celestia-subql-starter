@@ -19,7 +19,6 @@ interface TxStats {
 }
 
 export const getDecodedTxData = (tx: TxData): TxStats => {
-  let signer = "";
   const code = tx?.code || 0;
   const codespace = tx?.codespace || "";
   const gasUsed = tx?.gasUsed ? Number(tx.gasUsed) : 0;
@@ -65,7 +64,7 @@ export const getDecodedTxData = (tx: TxData): TxStats => {
         if (decodedType === "message") {
           if (decodeAttrKey === "sender") {
             if (decodeAttrValue && decodeAttrValue !== "") {
-              signer = decodeAttrValue;
+              acc.signer = decodeAttrValue;
             }
           }
           acc.nMessages += 1;
@@ -87,6 +86,11 @@ export const getDecodedTxData = (tx: TxData): TxStats => {
           if (decodeAttrKey === "fee") {
             const [fee] = decodeAttrValue?.split("utia");
             acc.txFee += Number(fee);
+          }
+        }
+        if (decodeAttrKey === "signer") {
+          if (decodeAttrValue && decodeAttrValue !== "") {
+            acc.signer = decodeAttrValue;
           }
         }
         if (decodedType === "celestia.blob.v1.EventPayForBlobs") {
@@ -111,11 +115,7 @@ export const getDecodedTxData = (tx: TxData): TxStats => {
               });
             }
           }
-          if (decodeAttrKey === "signer") {
-            if (decodeAttrValue && decodeAttrValue !== "") {
-              signer = decodeAttrValue;
-            }
-          }
+
           if (decodeAttrKey === "share_versions") {
             JSON.parse(decodeAttrValue)?.forEach(
               (attrV: number | string, idx: number) => {
@@ -165,7 +165,7 @@ export const getDecodedTxData = (tx: TxData): TxStats => {
       codespace: codespace,
       gasUsed: gasUsed,
       gasWanted: gasWanted,
-      signer: signer,
+      signer: "",
       blobs: [],
     }
   );
