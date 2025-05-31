@@ -68,9 +68,7 @@ export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
 }
 
 export async function handleMessage(msg: CosmosMessage): Promise<void> {
-  logger.info(
-    `Found message for ${msg.msg.typeUrl} ${JSON.stringify(msg.msg.decodedMsg)}`
-  );
+  logger.info(`Found message for ${msg.msg.typeUrl} {}`, msg.msg.decodedMsg);
   // tx.decodedTx.body.messages.forEach((msg) => {
   //   const base = Buffer.from(msg.value).toString("utf-8");
   //   logger.info(`TXN MSG ${msg.typeUrl} ::: ${base}`);
