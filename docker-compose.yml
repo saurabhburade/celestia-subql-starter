@@ -19,9 +19,7 @@ services:
 
   subquery-node:
     image: saurabhburade/subql-cosmos-node-test:latest
-    depends_on:
-      "postgres":
-        condition: service_healthy
+
     restart: unless-stopped
     environment:
       DB_USER: postgres
@@ -48,12 +46,7 @@ services:
     image: subquerynetwork/subql-query:latest
     ports:
       - 3000:3000
-    depends_on:
-      "postgres":
-        condition: service_healthy
-      "subquery-node":
-        condition: service_healthy
-    restart: always
+    restart: unless-stopped
     environment:
       DB_USER: postgres
       DB_PASS: postgres
@@ -63,4 +56,4 @@ services:
     command:
       - --name=app
       - --playground
-      - --indexer=http://subquery-node:3000
+
