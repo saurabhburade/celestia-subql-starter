@@ -45,7 +45,7 @@ services:
       retries: 10
 
   graphql-engine:
-    image: saurabhburade/subql-cosmos-node-test:latest
+    image: subquerynetwork/subql-query:latest
     ports:
       - 3000:3000
     depends_on:
