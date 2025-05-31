@@ -53,6 +53,7 @@ type BlobData @entity {
   transaction: TransactionData
   commitment: String
   size: Float
+  signer: String
 }
 
 type TransactionData @entity {

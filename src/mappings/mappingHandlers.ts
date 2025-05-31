@@ -53,6 +53,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
           shareVersion: blob.shareVersion || 0,
           commitment: blob.commitment || "",
           size: blob.blob_size || 0,
+          signer: decodedTx.signer || "",
         });
       });
       await store.bulkUpdate("BlobData", blobs);

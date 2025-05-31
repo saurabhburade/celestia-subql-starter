@@ -67,6 +67,11 @@ export const getDecodedTxData = (tx: TxData): TxStats => {
           "base64"
         ).toString("utf-8");
         if (decodedType === "message") {
+          if (decodeAttrKey === "sender") {
+            if (decodeAttrValue && decodeAttrValue !== "") {
+              signer = decodeAttrValue.toString();
+            }
+          }
           acc.nMessages += 1;
           acc.decodedMessages = [
             ...acc.decodedMessages,
@@ -115,7 +120,9 @@ export const getDecodedTxData = (tx: TxData): TxStats => {
             }
           }
           if (decodeAttrKey === "signer") {
-            signer = decodeAttrValue.toString();
+            if (decodeAttrValue && decodeAttrValue !== "") {
+              signer = decodeAttrValue.toString();
+            }
           }
           if (decodeAttrKey === "share_versions") {
             JSON.parse(decodeAttrValue)?.forEach(
