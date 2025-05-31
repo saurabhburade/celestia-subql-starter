@@ -36,21 +36,6 @@ export const getDecodedTxData = (tx: TxData): TxStats => {
         blob_size?: number | string;
       }[] = [];
       const decodedAttributes = v.attributes?.map((attr) => {
-        try {
-          const attrKey = Buffer.from(attr.key.toString(), "base64").toString(
-            "utf-8"
-          );
-
-          logger.info(
-            `🚀 ~ decodeBlockTx.ts:55 ~ attr: ${decodedType} :: ${attrKey}`
-          );
-          const attrValue = Buffer.from(
-            attr.value.toString(),
-            "base64"
-          ).toString("utf-8");
-        } catch (error) {
-          logger.info(`BUFFER DECODE ERROR`);
-        }
         const decodeAttrKey = Buffer.from(
           attr.key.toString(),
           "base64"
@@ -59,10 +44,28 @@ export const getDecodedTxData = (tx: TxData): TxStats => {
           attr.value.toString(),
           "base64"
         ).toString("utf-8");
+        try {
+          const attrKey = Buffer.from(attr.key.toString(), "base64").toString(
+            "utf-8"
+          );
+
+          logger.info(
+            `🚀 ~ decodeBlockTx.ts:55 ~ attr: ${decodedType} :: ${attrKey} :: ${
+              decodeAttrValue.length
+            } ::::  ${decodeAttrValue.length < 70 ? decodeAttrValue : ""}`
+          );
+          const attrValue = Buffer.from(
+            attr.value.toString(),
+            "base64"
+          ).toString("utf-8");
+        } catch (error) {
+          logger.info(`BUFFER DECODE ERROR`);
+        }
+
         if (decodedType === "message") {
           if (decodeAttrKey === "sender") {
             if (decodeAttrValue && decodeAttrValue !== "") {
-              signer = decodeAttrValue.toString();
+              signer = decodeAttrValue;
             }
           }
           acc.nMessages += 1;
@@ -110,7 +113,7 @@ export const getDecodedTxData = (tx: TxData): TxStats => {
           }
           if (decodeAttrKey === "signer") {
             if (decodeAttrValue && decodeAttrValue !== "") {
-              signer = decodeAttrValue.toString();
+              signer = decodeAttrValue;
             }
           }
           if (decodeAttrKey === "share_versions") {
