@@ -59,7 +59,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
       await store.bulkUpdate("BlobData", blobs);
     }
     logger.info(`Bytes ::  ${decodedTx?.totalBytes}`);
-    logger.info(`nNamespaces ::  ${decodedTx.namespaces}`);
+    logger.info(`nNamespaces ::  ${decodedTx.namespaces?.length}`);
     logger.info(`nEvents ::   ${decodedTx.decodedEvents?.length}`);
     logger.info(`nMsg ::   ${decodedTx.nMessages}`);
     logger.info(`TxFee ::   ${decodedTx.txFee}`);
