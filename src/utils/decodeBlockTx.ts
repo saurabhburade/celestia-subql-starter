@@ -37,25 +37,35 @@ export const getDecodedTxData = (tx: TxData): TxStats => {
       }[] = [];
       const decodedAttributes = v.attributes?.map((attr) => {
         try {
-          logger.info(
-            `🚀 ~ decodeBlockTx.ts:55 ~ attr: ${JSON.stringify(attr)}`
-          );
-          const decodeAttrKey = Buffer.from(
-            attr.key.toString(),
-            "base64"
-          ).toString("utf-8");
-          logger.info(
-            `🚀 ~ decodeBlockTx.ts:55 ~ val: ${JSON.stringify(attr.value)}`
+          const attrKey = Buffer.from(attr.key.toString(), "base64").toString(
+            "utf-8"
           );
 
-          const decodeAttrValue = Buffer.from(
+          logger.info(
+            `🚀 ~ decodeBlockTx.ts:55 ~ attr: ${JSON.stringify(
+              attr
+            )} ${attrKey}`
+          );
+          const attrValue = Buffer.from(
             attr.value.toString(),
             "base64"
           ).toString("utf-8");
+          logger.info(
+            `🚀 ~ decodeBlockTx.ts:55 ~ val: ${JSON.stringify(
+              attr.value
+            )} ${attrValue}`
+          );
         } catch (error) {
           logger.info(`BUFFER DECODE ERROR`);
         }
-
+        const decodeAttrKey = Buffer.from(
+          attr.key.toString(),
+          "base64"
+        ).toString("utf-8");
+        const decodeAttrValue = Buffer.from(
+          attr.value.toString(),
+          "base64"
+        ).toString("utf-8");
         if (decodedType === "message") {
           acc.nMessages += 1;
           acc.decodedMessages = [
