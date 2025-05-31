@@ -16,15 +16,15 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
   const height = block?.block?.header?.height;
   const txs = block.txs;
 
-  // logger.info(`BLOCK ::  ${height}`);
-  // txs.forEach((tx) => {
-  //   const decodedTx = getDecodedTxData(tx);
-  //   logger.info(`Bytes ::  ${decodedTx?.totalBytes}`);
-  //   logger.info(`nNamespaces ::  ${decodedTx.namespaces}`);
-  //   logger.info(`nEvents ::   ${decodedTx.decodedEvents?.length}`);
-  //   logger.info(`nMsg ::   ${decodedTx.nMessages}`);
-  //   logger.info(`TxFee ::   ${decodedTx.txFee}`);
-  // });
+  logger.info(`BLOCK ::  ${height}`);
+  txs.forEach((tx) => {
+    const decodedTx = getDecodedTxData(tx);
+    logger.info(`Bytes ::  ${decodedTx?.totalBytes}`);
+    logger.info(`nNamespaces ::  ${decodedTx.namespaces}`);
+    logger.info(`nEvents ::   ${decodedTx.decodedEvents?.length}`);
+    logger.info(`nMsg ::   ${decodedTx.nMessages}`);
+    logger.info(`TxFee ::   ${decodedTx.txFee}`);
+  });
 }
 /*
 export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
@@ -61,14 +61,16 @@ export async function handleEvent(event: CosmosEvent): Promise<void> {
   // Handle Blob Event
 }
 export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
-  // tx.decodedTx.body.messages.forEach((msg) => {
-  //   const base = Buffer.from(msg.value).toString("utf-8");
-  //   logger.info(`TXN MSG ${msg.typeUrl} ::: ${base}`);
-  // });
+  tx.decodedTx.body.messages.forEach((msg) => {
+    const base = Buffer.from(msg.value).toString("utf-8");
+    logger.info(`TXN MSG ${msg.typeUrl} ::: ${msg.value}`);
+  });
 }
 
 export async function handleMessage(msg: CosmosMessage): Promise<void> {
-  logger.info(`Found message for ${JSON.stringify(msg.msg.decodedMsg)}`);
+  logger.info(
+    `Found message for ${msg.msg.typeUrl} ${JSON.stringify(msg.msg.decodedMsg)}`
+  );
   // tx.decodedTx.body.messages.forEach((msg) => {
   //   const base = Buffer.from(msg.value).toString("utf-8");
   //   logger.info(`TXN MSG ${msg.typeUrl} ::: ${base}`);

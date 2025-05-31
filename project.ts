@@ -74,9 +74,6 @@ const project: CosmosProject = {
           {
             handler: "handleMessage",
             kind: CosmosHandlerKind.Message,
-            filter: {
-              type: "celestia.blob.v1.MsgPayForBlobs",
-            },
           },
           // {
           //   handler: "handleBlock",
