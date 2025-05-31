@@ -52,6 +52,7 @@ type BlobData @entity {
   namespaceVersion: String
   transaction: TransactionData
   commitment: String
+  size: Float
 }
 
 type TransactionData @entity {

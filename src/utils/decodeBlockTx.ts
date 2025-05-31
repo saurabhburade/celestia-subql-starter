@@ -33,7 +33,7 @@ export const getDecodedTxData = (tx: TxData): TxStats => {
         namespace?: string;
         commitment?: string;
         shareVersion?: number | string;
-        blob_sizes?: number | string;
+        blob_size?: number | string;
       }[] = [];
       const decodedAttributes = v.attributes?.map((attr) => {
         const decodeAttrKey = Buffer.from(
@@ -78,7 +78,7 @@ export const getDecodedTxData = (tx: TxData): TxStats => {
           if (decodeAttrKey === "namespaces") {
             const nameSpaces = decodeAttrValue;
             if (nameSpaces?.length > 0) {
-              JSON.parse(nameSpaces).forEach((ns: string) => {
+              JSON.parse(nameSpaces).forEach((ns: string, idx: number) => {
                 const prev = bbs[idx] || {};
                 bbs[idx] = { ...prev, namespace: ns };
               });
@@ -88,7 +88,7 @@ export const getDecodedTxData = (tx: TxData): TxStats => {
           if (decodeAttrKey === "share_commitments") {
             const commitments = decodeAttrValue;
             if (commitments?.length > 0) {
-              JSON.parse(commitments).forEach((c: string) => {
+              JSON.parse(commitments).forEach((c: string, idx: number) => {
                 const prev = bbs[idx] || {};
                 bbs[idx] = { ...prev, commitment: c };
               });
@@ -109,7 +109,7 @@ export const getDecodedTxData = (tx: TxData): TxStats => {
             const blobSizes = JSON.parse(decodeAttrValue)?.reduce(
               (sum: number, attrV: number | string, idx: number) => {
                 const prev = bbs[idx] || {};
-                bbs[idx] = { ...prev, blobSize: attrV };
+                bbs[idx] = { ...prev, blob_size: attrV };
                 return sum + Number(attrV);
               },
               0

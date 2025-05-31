@@ -18,7 +18,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
   const txs = block.txs;
 
   logger.info(`BLOCK ::  ${height}`);
-  for (let idx = 0; idx < txs.idx; idx++) {
+  for (let idx = 0; idx < txs.length; idx++) {
     const tx = txs[idx];
     const decodedTx = getDecodedTxData(tx);
     decodedTx.decodedMessages.forEach((msg) => {
@@ -29,7 +29,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
     const transactionRecord = TransactionData.create({
       id: `${height}-${idx}`,
       blockHeight: height,
-      feeTIA: decodedTx.txFee,
+
       denomination: "tia",
       amount: decodedTx.txFee,
       hash: `${height}-${idx}`,
@@ -37,7 +37,6 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
       isBlobTransaction: decodedTx?.totalBytes > 0 ? true : false,
       nDataSubs: decodedTx.nDataSubs,
       nMessages: decodedTx.nMessages,
-      nTransfer: decodedTx.nTransfer,
 
       totalBytes: decodedTx.totalBytes,
       nEvents: decodedTx.nEvents,
@@ -45,12 +44,11 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
       signer: decodedTx.signer,
       // blockHeight: BigInt(block.block.header.height),
       timestamp: block.block.header.time.getTime(),
-      blobs: [],
     });
     await transactionRecord.save();
     if (decodedTx.blobs && decodedTx.blobs.length > 0) {
       const blobs: BlobData[] = decodedTx.blobs.map((blob, idx) => {
-        return {
+        return BlobData.create({
           id: `${height}-${idx}-${idx}`,
           data: "",
           namespaceId: blob.namespace || "",
@@ -58,7 +56,8 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
           namespaceVersion: blob.shareVersion || 0,
           shareVersion: blob.shareVersion || 0,
           commitment: blob.commitment || "",
-        };
+          size: blob.blob_size || 0,
+        });
       });
       await store.bulkUpdate("BlobData", blobs);
     }
