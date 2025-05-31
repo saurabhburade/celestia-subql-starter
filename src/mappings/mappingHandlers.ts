@@ -5,6 +5,7 @@ import {
   CosmosTransaction,
 } from "@subql/types-cosmos";
 import { getDecodedTxData } from "../utils/decodeBlockTx";
+import { BlobData, TransactionData } from "../types/models";
 
 /*
 export async function handleBlock(block: CosmosBlock): Promise<void> {
@@ -17,14 +18,56 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
   const txs = block.txs;
 
   logger.info(`BLOCK ::  ${height}`);
-  txs.forEach((tx) => {
+  for (let idx = 0; idx < txs.idx; idx++) {
+    const tx = txs[idx];
     const decodedTx = getDecodedTxData(tx);
+    decodedTx.decodedMessages.forEach((msg) => {
+      const base = Buffer.from(msg.value).toString("utf-8");
+      logger.info(`TXN MSG ${msg.type} ::: ${base}`);
+    });
+
+    const transactionRecord = TransactionData.create({
+      id: `${height}-${idx}`,
+      blockHeight: height,
+      feeTIA: decodedTx.txFee,
+      denomination: "tia",
+      amount: decodedTx.txFee,
+      hash: `${height}-${idx}`,
+
+      isBlobTransaction: decodedTx?.totalBytes > 0 ? true : false,
+      nDataSubs: decodedTx.nDataSubs,
+      nMessages: decodedTx.nMessages,
+      nTransfer: decodedTx.nTransfer,
+
+      totalBytes: decodedTx.totalBytes,
+      nEvents: decodedTx.nEvents,
+      txFeeTIA: decodedTx.txFee,
+      signer: decodedTx.signer,
+      // blockHeight: BigInt(block.block.header.height),
+      timestamp: block.block.header.time.getTime(),
+      blobs: [],
+    });
+    await transactionRecord.save();
+    if (decodedTx.blobs && decodedTx.blobs.length > 0) {
+      const blobs: BlobData[] = decodedTx.blobs.map((blob, idx) => {
+        return {
+          id: `${height}-${idx}-${idx}`,
+          data: "",
+          namespaceId: blob.namespace || "",
+          transactionId: transactionRecord.id || "",
+          namespaceVersion: blob.shareVersion || 0,
+          shareVersion: blob.shareVersion || 0,
+          commitment: blob.commitment || "",
+        };
+      });
+      await store.bulkUpdate("BlobData", blobs);
+    }
     logger.info(`Bytes ::  ${decodedTx?.totalBytes}`);
     logger.info(`nNamespaces ::  ${decodedTx.namespaces}`);
     logger.info(`nEvents ::   ${decodedTx.decodedEvents?.length}`);
     logger.info(`nMsg ::   ${decodedTx.nMessages}`);
     logger.info(`TxFee ::   ${decodedTx.txFee}`);
-  });
+  }
 }
 /*
 export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
@@ -63,12 +106,13 @@ export async function handleEvent(event: CosmosEvent): Promise<void> {
 export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
   tx.decodedTx.body.messages.forEach((msg) => {
     const base = Buffer.from(msg.value).toString("utf-8");
-    logger.info(`TXN MSG ${msg.typeUrl} ::: ${msg.value}`);
+
+    // logger.info(`TXN MSG ${msg.typeUrl} ::: ${msg}`);
   });
 }
 
 export async function handleMessage(msg: CosmosMessage): Promise<void> {
-  logger.info(`Found message for ${msg.msg.typeUrl} {}`, msg.msg.decodedMsg);
+  logger.info(`Found message for ${msg.msg.typeUrl} ${msg.msg.decodedMsg}`);
   // tx.decodedTx.body.messages.forEach((msg) => {
   //   const base = Buffer.from(msg.value).toString("utf-8");
   //   logger.info(`TXN MSG ${msg.typeUrl} ::: ${base}`);

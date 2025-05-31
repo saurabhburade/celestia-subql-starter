@@ -44,3 +44,33 @@ type BlockData @entity {
 
   timestamp: Float
 }
+type BlobData @entity {
+  id: ID!
+  namespaceId: String
+  data: String
+  shareVersion: String
+  namespaceVersion: String
+  transaction: TransactionData
+  commitment: String
+}
+
+type TransactionData @entity {
+  id: ID!
+  hash: String! @index
+  blockHeight: Float! @index
+  timestamp: Float!
+
+  signer: String!
+
+  amount: Float!
+  denomination: String!
+
+  txFeeTIA: Float!
+  nMessages: Float!
+  nEvents: Float!
+  nDataSubs: Float!
+  totalBytes: Float!
+
+  isBlobTransaction: Boolean!
+  blobs: [BlobData] @derivedFrom(field: "transaction")
+}
