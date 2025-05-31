@@ -44,7 +44,7 @@ const project: CosmosProject = {
       [
         "celestia.blob.v1",
         {
-          file: "./proto/celestia//blob//v1/tx.proto",
+          file: "./proto/celestia/blob/v1/tx.proto",
           messages: ["MsgPayForBlobs"],
         },
       ],
