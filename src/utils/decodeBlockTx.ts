@@ -42,19 +42,12 @@ export const getDecodedTxData = (tx: TxData): TxStats => {
           );
 
           logger.info(
-            `🚀 ~ decodeBlockTx.ts:55 ~ attr: ${JSON.stringify(
-              attr
-            )} ${attrKey}`
+            `🚀 ~ decodeBlockTx.ts:55 ~ attr: ${decodedType} :: ${attrKey}`
           );
           const attrValue = Buffer.from(
             attr.value.toString(),
             "base64"
           ).toString("utf-8");
-          logger.info(
-            `🚀 ~ decodeBlockTx.ts:55 ~ val: ${JSON.stringify(
-              attr.value
-            )} ${attrValue}`
-          );
         } catch (error) {
           logger.info(`BUFFER DECODE ERROR`);
         }
@@ -95,10 +88,6 @@ export const getDecodedTxData = (tx: TxData): TxStats => {
         }
         if (decodedType === "celestia.blob.v1.EventPayForBlobs") {
           acc.nDataSubs += 1;
-
-          logger.info(
-            `🚀 ~ decodeBlockTx.ts:57 ~ decodeAttrKey: ${decodeAttrKey} VAL:${decodeAttrValue}`
-          );
 
           if (decodeAttrKey === "namespaces") {
             const nameSpaces = decodeAttrValue;
