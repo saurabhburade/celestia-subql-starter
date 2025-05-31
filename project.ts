@@ -40,29 +40,36 @@ const project: CosmosProject = {
       "https://public-celestia-rpc.numia.xyz",
       // "https://celestia-rpc.mesa.newmetric.xyz",
     ],
-    // chaintypes: new Map([
-    //   [
-    //     "cosmos.slashing.v1beta1",
-    //     {
-    //       file: "./proto/cosmos/slashing/v1beta1/tx.proto",
-    //       messages: ["MsgUnjail"],
-    //     },
-    //   ],
-    //   [
-    //     "cosmos.gov.v1beta1",
-    //     {
-    //       file: "./proto/cosmos/gov/v1beta1/tx.proto",
-    //       messages: ["MsgVoteWeighted"],
-    //     },
-    //   ],
-    //   [
-    //     "cosmos.gov.v1beta1.gov",
-    //     {
-    //       file: "./proto/cosmos/gov/v1beta1/gov.proto",
-    //       messages: ["WeightedVoteOption"],
-    //     },
-    //   ],
-    // ]),
+    chaintypes: new Map([
+      [
+        "celestia.blob.v1",
+        {
+          file: "./proto/celestia//blob//v1/tx.proto",
+          messages: ["MsgPayForBlobs"],
+        },
+      ],
+      [
+        "cosmos.slashing.v1beta1",
+        {
+          file: "./proto/cosmos/slashing/v1beta1/tx.proto",
+          messages: ["MsgUnjail"],
+        },
+      ],
+      [
+        "cosmos.gov.v1beta1",
+        {
+          file: "./proto/cosmos/gov/v1beta1/tx.proto",
+          messages: ["MsgVoteWeighted"],
+        },
+      ],
+      [
+        "cosmos.gov.v1beta1.gov",
+        {
+          file: "./proto/cosmos/gov/v1beta1/gov.proto",
+          messages: ["WeightedVoteOption"],
+        },
+      ],
+    ]),
   },
   dataSources: [
     {
