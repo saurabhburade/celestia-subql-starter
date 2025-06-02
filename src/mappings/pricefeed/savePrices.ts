@@ -2,8 +2,6 @@ import fetch from "node-fetch";
 const { writeFileSync, readdirSync } = require("fs");
 import { PriceFeedMinute } from "../../types";
 import { CosmosBlock } from "@subql/types-cosmos";
-import { join } from "path";
-import { readFileSync } from "fs";
 
 async function fetchData(url: string, options: any) {
   const response = await fetch(url, {
@@ -19,6 +17,29 @@ const MONTHLY_SECONDS = 2628000;
 const INITIAL_TIMESTAMP = 1748816100000;
 const MS_IN_DAY = 86400000;
 const MS_IN_MINUTE = 1000 * 60;
+const CONSTANT_PRICE_FEED_FILES = [
+  "2023-10",
+  "2023-11",
+  "2023-12",
+  "2024-01",
+  "2024-02",
+  "2024-03",
+  "2024-04",
+  "2024-05",
+  "2024-06",
+  "2024-07",
+  "2024-08",
+  "2024-09",
+  "2024-10",
+  "2024-11",
+  "2024-12",
+  "2025-01",
+  "2025-02",
+  "2025-03",
+  "2025-04",
+  "2025-05",
+  "2025-06",
+];
 export async function handleNewPriceMinute({
   block,
 }: {
@@ -58,9 +79,12 @@ export async function handleNewPriceMinute({
       const files = readdirSync("./saveddata/").filter((f: string) =>
         f.endsWith(".json")
       );
-      for (const file of files) {
-        const filePath = join("./saveddata/", file);
-        const data = JSON.parse(readFileSync(filePath, "utf8"));
+      for (const file of CONSTANT_PRICE_FEED_FILES) {
+        const data = await fetchData(
+          `https://raw.githubusercontent.com/saurabhburade/celestia-subql-starter/refs/heads/dev/src/mappings/pricefeed/saveddata/${file}.json`,
+          {}
+        );
+        logger.info(`FETCHED PRICE DATA FROM FILE :: ${file}.json`);
         const pricesToSave: PriceFeedMinute[] = [];
         for (const element of data) {
           // SAVE MONTHLY DATA FROM LOCAL FILES
