@@ -39,6 +39,14 @@ const CONSTANT_PRICE_FEED_FILES = [
   "2025-05",
   "2025-06",
 ];
+function chunkArray(array: PriceFeedMinute[], chunkSize = 1000) {
+  const result = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    result.push(array.slice(i, i + chunkSize));
+  }
+  return result;
+}
+
 export async function handleNewPriceMinute({
   block,
 }: {
@@ -91,14 +99,22 @@ export async function handleNewPriceMinute({
             date: element?.timestampF,
             tiaDate: blockDate,
           });
-          // pricesToSave.push(priceForMinute);
+          pricesToSave.push(priceForMinute);
 
-          await priceForMinute.save();
-          logger.info(`SAVED PRICE DATA ON :: ${element?.timestampF}`);
+          // await priceForMinute.save();
           if (Number(element?.minuteId) === minuteId) {
             priceFeedThisMinute = priceForMinute;
           }
-          // await store.bulkUpdate("PriceFeedMinute", pricesToSave);
+          const splitedChunk = chunkArray(pricesToSave, 500);
+          for (let index = 0; index < splitedChunk.length; index++) {
+            logger.info(`SAVING PRICES CHUNK`);
+
+            const ck = splitedChunk[index];
+            await store.bulkUpdate("PriceFeedMinute", ck);
+            logger.info(
+              `SAVED PRICES CHUNK :: ${index} out of ${splitedChunk.length}`
+            );
+          }
         }
       }
       return priceFeedThisMinute!;
