@@ -83,6 +83,7 @@ export async function handleNewPriceMinute({
     }
     let priceFeedThisMinute;
     if (minuteId <= 29147512) {
+      let fileIdx = 0;
       for (const file of CONSTANT_PRICE_FEED_FILES) {
         const data = await fetchData(
           `https://raw.githubusercontent.com/saurabhburade/celestia-subql-starter/refs/heads/dev/src/mappings/pricefeed/saveddata/${file}.json`,
@@ -105,17 +106,18 @@ export async function handleNewPriceMinute({
           if (Number(element?.minuteId) === minuteId) {
             priceFeedThisMinute = priceForMinute;
           }
-          const splitedChunk = chunkArray(pricesToSave, 500);
-          for (let index = 0; index < splitedChunk.length; index++) {
-            logger.info(`SAVING PRICES CHUNK`);
-
-            const ck = splitedChunk[index];
-            await store.bulkUpdate("PriceFeedMinute", ck);
-            logger.info(
-              `SAVED PRICES CHUNK :: ${index} out of ${splitedChunk.length}`
-            );
-          }
         }
+        const splitedChunk = chunkArray(pricesToSave, 1000);
+        for (let index = 0; index < splitedChunk.length; index++) {
+          logger.info(`SAVING PRICES CHUNK`);
+
+          const ck = splitedChunk[index];
+          await store.bulkUpdate("PriceFeedMinute", ck);
+          logger.info(
+            `SAVED PRICES CHUNK :: ${index} out of ${splitedChunk.length}`
+          );
+        }
+        fileIdx += 1;
       }
       return priceFeedThisMinute!;
     }
