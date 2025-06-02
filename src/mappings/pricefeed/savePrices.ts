@@ -1,9 +1,9 @@
-// @ts-nocheck
 import fetch from "node-fetch";
-import fs from "fs";
+const { writeFileSync, readdirSync } = require("fs");
 import { PriceFeedMinute } from "../../types";
 import { CosmosBlock } from "@subql/types-cosmos";
-import path from "path";
+import { join } from "path";
+import { readFileSync } from "fs";
 
 async function fetchData(url: string, options: any) {
   const response = await fetch(url, {
@@ -55,12 +55,12 @@ export async function handleNewPriceMinute({
     }
     let priceFeedThisMinute;
     if (minuteId <= 29147512) {
-      const files = fs
-        .readdirSync("./saveddata/")
-        .filter((f) => f.endsWith(".json"));
+      const files = readdirSync("./saveddata/").filter((f: string) =>
+        f.endsWith(".json")
+      );
       for (const file of files) {
-        const filePath = path.join("./saveddata/", file);
-        const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
+        const filePath = join("./saveddata/", file);
+        const data = JSON.parse(readFileSync(filePath, "utf8"));
         const pricesToSave: PriceFeedMinute[] = [];
         for (const element of data) {
           // SAVE MONTHLY DATA FROM LOCAL FILES
