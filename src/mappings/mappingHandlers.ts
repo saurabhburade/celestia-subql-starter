@@ -6,8 +6,7 @@ import {
 } from "@subql/types-cosmos";
 import { getDecodedTxData } from "../utils/decodeBlockTx";
 import { BlobData, TransactionData } from "../types/models";
-import { sha256 } from "@cosmjs/crypto";
-import { toHex } from "@cosmjs/encoding";
+
 import { handleNewPriceMinute } from "./pricefeed/savePrices";
 /*
 export async function handleBlock(block: CosmosBlock): Promise<void> {
@@ -26,7 +25,6 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
   logger.info(`BLOCK ::  ${height}`);
   for (let idx = 0; idx < txs.length; idx++) {
     const tx = txs[idx];
-    const txHash = tx.data ? toHex(sha256(tx.data)).toUpperCase() : "";
 
     const decodedTx = getDecodedTxData(tx);
 
