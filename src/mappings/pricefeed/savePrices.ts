@@ -1,5 +1,4 @@
 import fetch from "node-fetch";
-const { writeFileSync, readdirSync } = require("fs");
 import { PriceFeedMinute } from "../../types";
 import { CosmosBlock } from "@subql/types-cosmos";
 
@@ -76,9 +75,6 @@ export async function handleNewPriceMinute({
     }
     let priceFeedThisMinute;
     if (minuteId <= 29147512) {
-      const files = readdirSync("./saveddata/").filter((f: string) =>
-        f.endsWith(".json")
-      );
       for (const file of CONSTANT_PRICE_FEED_FILES) {
         const data = await fetchData(
           `https://raw.githubusercontent.com/saurabhburade/celestia-subql-starter/refs/heads/dev/src/mappings/pricefeed/saveddata/${file}.json`,
