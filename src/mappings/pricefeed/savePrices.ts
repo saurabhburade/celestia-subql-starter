@@ -91,11 +91,14 @@ export async function handleNewPriceMinute({
             date: element?.timestampF,
             tiaDate: blockDate,
           });
-          pricesToSave.push(priceForMinute);
+          // pricesToSave.push(priceForMinute);
+
+          await priceForMinute.save();
+          logger.info(`SAVED PRICE DATA ON :: ${element?.timestampF}`);
           if (Number(element?.minuteId) === minuteId) {
             priceFeedThisMinute = priceForMinute;
           }
-          await store.bulkUpdate("PriceFeedMinute", pricesToSave);
+          // await store.bulkUpdate("PriceFeedMinute", pricesToSave);
         }
       }
       return priceFeedThisMinute!;
