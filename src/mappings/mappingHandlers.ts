@@ -6,7 +6,9 @@ import {
 } from "@subql/types-cosmos";
 import { getDecodedTxData } from "../utils/decodeBlockTx";
 import { BlobData, TransactionData } from "../types/models";
-
+import { sha256 } from "@cosmjs/crypto";
+import { toHex } from "@cosmjs/encoding";
+import { handleNewPriceMinute } from "./pricefeed/savePrices";
 /*
 export async function handleBlock(block: CosmosBlock): Promise<void> {
   // If you want to index each block in Cosmos (CosmosHub), you could do that here
@@ -14,12 +16,18 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
 */
 export async function handleBlock(block: CosmosBlock): Promise<void> {
   // If you want to index each block in Cosmos (CosmosHub), you could do that here
-  const height = block?.block?.header?.height;
-  const txs = block.txs;
+  const height = block?.block?.header.height;
 
+  const txs = block.txs;
+  const blockHash = block.blockId.hash;
+  const priceData = handleNewPriceMinute({ block });
+
+  logger.info(`PRICE DATA FOUND ::  ${JSON.stringify(priceData)}`);
   logger.info(`BLOCK ::  ${height}`);
   for (let idx = 0; idx < txs.length; idx++) {
     const tx = txs[idx];
+    const txHash = tx.data ? toHex(sha256(tx.data)).toUpperCase() : "";
+
     const decodedTx = getDecodedTxData(tx);
 
     const transactionRecord = TransactionData.create({
@@ -58,11 +66,11 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
       });
       await store.bulkUpdate("BlobData", blobs);
     }
-    logger.info(`Bytes ::  ${decodedTx?.totalBytes}`);
-    logger.info(`nNamespaces ::  ${decodedTx.namespaces?.length}`);
-    logger.info(`nEvents ::   ${decodedTx.decodedEvents?.length}`);
-    logger.info(`nMsg ::   ${decodedTx.nMessages}`);
-    logger.info(`TxFee ::   ${decodedTx.txFee}`);
+    // logger.info(`Bytes ::  ${decodedTx?.totalBytes}`);
+    // logger.info(`nNamespaces ::  ${decodedTx.namespaces?.length}`);
+    // logger.info(`nEvents ::   ${decodedTx.decodedEvents?.length}`);
+    // logger.info(`nMsg ::   ${decodedTx.nMessages}`);
+    // logger.info(`TxFee ::   ${decodedTx.txFee}`);
   }
 }
 /*

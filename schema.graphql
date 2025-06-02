@@ -76,3 +76,27 @@ type TransactionData @entity {
   isBlobTransaction: Boolean!
   blobs: [BlobData] @derivedFrom(field: "transaction")
 }
+
+type Block @entity {
+  id: ID!
+  height: Float! @index
+  hash: String! @index
+  timestamp: Date! @index
+  proposer: String
+  nTransactions: Int
+  nEvents: Int
+  nBlobs: Int
+  blobSize: Int
+  totalFeesTIA: Float
+  totalFeesUSD: Float
+  version: String
+  tiaPrice: Float!
+}
+
+type PriceFeedMinute @entity {
+  id: ID!
+  date: Date
+  tiaPrice: Float!
+  tiaBlock: Int!
+  tiaDate: Date
+}

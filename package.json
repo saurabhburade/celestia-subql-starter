@@ -28,6 +28,8 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@cosmjs/crypto": "^0.33.1",
+    "@cosmjs/encoding": "^0.33.1",
     "@subql/common-cosmos": "^5.1.0",
     "@subql/types-cosmos": "latest",
     "@types/node": "^17.0.21",
