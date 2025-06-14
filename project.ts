@@ -74,7 +74,7 @@ const project: CosmosProject = {
   dataSources: [
     {
       kind: CosmosDatasourceKind.Runtime,
-      startBlock: 3130617,
+      startBlock: 1,
       mapping: {
         file: "./dist/index.js",
         handlers: [
