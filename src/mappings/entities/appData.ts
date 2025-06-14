@@ -13,6 +13,7 @@ import {
 import { CosmosBlock, TxData } from "@subql/types-cosmos";
 import { getDecodedTxData, TxStats } from "../../utils/decodeBlockTx";
 import { sha256 } from "@cosmjs/crypto";
+import { handleAccount } from "./accountData";
 
 export async function handleApp(
   decodedTxn: TxStats,
@@ -97,6 +98,8 @@ export async function handleApp(
 
     // return appEntity;
     await appEntity.save();
+    await handleAccount(decodedTxn, priceFeed!, block, 1);
+
     await handleAppDayData(decodedTxn, priceFeed, block, type, appEntity, blob);
     await handleAppHourData(
       decodedTxn,
