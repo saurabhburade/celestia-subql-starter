@@ -9,6 +9,7 @@ import { BlobData, TransactionData } from "../types/models";
 
 import { handleNewPriceMinute } from "./pricefeed/savePrices";
 import { handleAccount } from "./entities/accountData";
+import { handleApp } from "./entities/appData";
 /*
 export async function handleBlock(block: CosmosBlock): Promise<void> {
   // If you want to index each block in Cosmos (CosmosHub), you could do that here
@@ -50,8 +51,10 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
     });
     await transactionRecord.save();
     if (decodedTx.blobs && decodedTx.blobs.length > 0) {
-      const blobs: BlobData[] = decodedTx.blobs.map((blob, idx) => {
-        return BlobData.create({
+      const blobs: BlobData[] = [];
+      for (let idx = 0; idx < decodedTx.blobs.length; idx++) {
+        const blob = decodedTx.blobs[idx];
+        const bEntity = BlobData.create({
           id: `${height}-${idx}-${idx}`,
           data: "",
           namespaceId: blob.namespace || "",
@@ -62,7 +65,10 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
           size: blob.blob_size || 0,
           signer: decodedTx.signer || "",
         });
-      });
+        await handleApp(tx, priceData!, block, 0, bEntity);
+        blobs.push(bEntity);
+      }
+
       await store.bulkUpdate("BlobData", blobs);
     }
     await handleAccount(tx, priceData!, block, 0);
