@@ -5,7 +5,7 @@ import {
   CosmosTransaction,
 } from "@subql/types-cosmos";
 import { getDecodedTxData } from "../utils/decodeBlockTx";
-import { BlobData, TransactionData } from "../types/models";
+import { BlobData, BlockData, TransactionData } from "../types/models";
 
 import { handleNewPriceMinute } from "./pricefeed/savePrices";
 import { handleAccount } from "./entities/accountData";
@@ -26,6 +26,21 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
 
   logger.info(`PRICE DATA FOUND ::  ${JSON.stringify(priceData?.nativePrice)}`);
   logger.info(`BLOCK ::  ${height}`);
+  let bdata = BlockData.create({
+    id: height.toString(),
+    avgNativePrice: priceData?.nativePrice!,
+    currentNativePrice: priceData?.nativePrice!,
+    hash: "",
+    height: height,
+    proposer: block.header.proposerAddress.toString(),
+    totalBlobSize: 0,
+    totalBlobTransactionCount: 0,
+    totalBlockFeeNatve: 0,
+    totalBlockFeeUSD: 0,
+    totalEventsCount: 0,
+    totalSquareSize: 0,
+    totalTransactionCount: block.transactions.length,
+  });
   for (let idx = 0; idx < txs.length; idx++) {
     const tx = txs[idx];
 
@@ -51,7 +66,16 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
       timestamp: block.block.header.time.getTime(),
     });
     await transactionRecord.save();
+    bdata.totalBlockFeeNatve += decodedTx.txFee;
+    bdata.totalBlockFeeUSD +=
+      Number(decodedTx.txFee) * (priceData?.nativePrice || 0);
+    bdata.totalTransactionCount += 1;
+    bdata.totalEventsCount += decodedTx.nEvents;
+
     if (decodedTx.blobs && decodedTx.blobs.length > 0) {
+      bdata.totalBlobSize += decodedTx.totalBytes;
+      bdata.totalBlobTransactionCount += 1;
+
       const blobs: BlobData[] = [];
       for (let idx = 0; idx < decodedTx.blobs.length; idx++) {
         const blob = decodedTx.blobs[idx];
@@ -72,6 +96,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
 
       await store.bulkUpdate("BlobData", blobs);
     }
+
     await handleAccount(decodedTx, priceData!, block, 0);
     await handleCollective(decodedTx, priceData!, block, 0);
     // logger.info(`Bytes ::  ${decodedTx?.totalBytes}`);
@@ -80,6 +105,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
     // logger.info(`nMsg ::   ${decodedTx.nMessages}`);
     // logger.info(`TxFee ::   ${decodedTx.txFee}`);
   }
+  await bdata.save();
 }
 /*
 export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
