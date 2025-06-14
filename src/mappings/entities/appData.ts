@@ -63,16 +63,16 @@ export async function handleApp(
 
       const fees = Number(decodedTxn.txFee);
       const feesUSD = fees * priceFeed.nativePrice;
+      if (decodedTxn?.blobs?.length > 0) {
+        appEntity.totalDAFees =
+          appEntity.totalDAFees! + Number(decodedTxn.txFee)!;
+        appEntity.totalDAFeesUSD = appEntity.totalDAFeesUSD! + feesUSD;
+        appEntity.totalDataSubmissionCount =
+          appEntity.totalDataSubmissionCount! + 1;
 
-      appEntity.totalDAFees =
-        appEntity.totalDAFees! + Number(decodedTxn.txFee)!;
-      appEntity.totalDAFeesUSD = appEntity.totalDAFeesUSD! + feesUSD;
-      appEntity.totalDataSubmissionCount =
-        appEntity.totalDataSubmissionCount! + 1;
-
-      appEntity.totalByteSize =
-        appEntity.totalByteSize + Number(dataSubmissionSize);
-
+        appEntity.totalByteSize =
+          appEntity.totalByteSize + Number(dataSubmissionSize);
+      }
       appEntity.totalFeesNative =
         appEntity.totalFeesNative! + Number(decodedTxn.txFee!);
 
@@ -173,16 +173,16 @@ export async function handleAppDayData(
 
       const fees = Number(decodedTxn.txFee);
       const feesUSD = fees * priceFeed.nativePrice;
+      if (decodedTxn?.blobs?.length > 0) {
+        appDayEntity.totalDAFees =
+          appDayEntity.totalDAFees! + Number(decodedTxn.txFee)!;
+        appDayEntity.totalDAFeesUSD = appDayEntity.totalDAFeesUSD! + feesUSD;
+        appDayEntity.totalDataSubmissionCount =
+          appDayEntity.totalDataSubmissionCount! + 1;
 
-      appDayEntity.totalDAFees =
-        appDayEntity.totalDAFees! + Number(decodedTxn.txFee)!;
-      appDayEntity.totalDAFeesUSD = appDayEntity.totalDAFeesUSD! + feesUSD;
-      appDayEntity.totalDataSubmissionCount =
-        appDayEntity.totalDataSubmissionCount! + 1;
-
-      appDayEntity.totalByteSize =
-        appDayEntity.totalByteSize + Number(dataSubmissionSize);
-
+        appDayEntity.totalByteSize =
+          appDayEntity.totalByteSize + Number(dataSubmissionSize);
+      }
       appDayEntity.totalFeesNative =
         appDayEntity.totalFeesNative! + Number(decodedTxn.txFee!);
 
@@ -274,16 +274,16 @@ export async function handleAppHourData(
 
       const fees = Number(decodedTxn.txFee);
       const feesUSD = fees * priceFeed.nativePrice;
+      if (decodedTxn?.blobs?.length > 0) {
+        appHourEntity.totalDAFees =
+          appHourEntity.totalDAFees! + Number(decodedTxn.txFee)!;
+        appHourEntity.totalDAFeesUSD = appHourEntity.totalDAFeesUSD! + feesUSD;
+        appHourEntity.totalDataSubmissionCount =
+          appHourEntity.totalDataSubmissionCount! + 1;
 
-      appHourEntity.totalDAFees =
-        appHourEntity.totalDAFees! + Number(decodedTxn.txFee)!;
-      appHourEntity.totalDAFeesUSD = appHourEntity.totalDAFeesUSD! + feesUSD;
-      appHourEntity.totalDataSubmissionCount =
-        appHourEntity.totalDataSubmissionCount! + 1;
-
-      appHourEntity.totalByteSize =
-        appHourEntity.totalByteSize + Number(dataSubmissionSize);
-
+        appHourEntity.totalByteSize =
+          appHourEntity.totalByteSize + Number(dataSubmissionSize);
+      }
       appHourEntity.totalFeesNative =
         appHourEntity.totalFeesNative! + Number(decodedTxn.txFee!);
 

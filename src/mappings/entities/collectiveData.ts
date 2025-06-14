@@ -55,16 +55,16 @@ export async function handleCollective(
 
       const fees = Number(decodedTxn.txFee);
       const feesUSD = fees * priceFeed.nativePrice;
-
-      collectiveEntity.totalDAFees =
-        collectiveEntity.totalDAFees! + Number(decodedTxn.txFee)!;
-      collectiveEntity.totalDAFeesUSD =
-        collectiveEntity.totalDAFeesUSD! + feesUSD;
-      collectiveEntity.totalDataSubmissionCount =
-        collectiveEntity.totalDataSubmissionCount! + 1;
-
-      collectiveEntity.totalByteSize =
-        collectiveEntity.totalByteSize + Number(dataSubmissionSize);
+      if (decodedTxn?.blobs?.length > 0) {
+        collectiveEntity.totalDAFees =
+          collectiveEntity.totalDAFees! + Number(decodedTxn.txFee)!;
+        collectiveEntity.totalDAFeesUSD =
+          collectiveEntity.totalDAFeesUSD! + feesUSD;
+        collectiveEntity.totalDataSubmissionCount =
+          collectiveEntity.totalDataSubmissionCount! + 1;
+        collectiveEntity.totalByteSize =
+          collectiveEntity.totalByteSize + Number(dataSubmissionSize);
+      }
 
       collectiveEntity.totalFeesNative =
         collectiveEntity.totalFeesNative! + Number(decodedTxn.txFee!);
@@ -167,17 +167,17 @@ export async function handleCollectiveDayData(
 
       const fees = Number(decodedTxn.txFee);
       const feesUSD = fees * priceFeed.nativePrice;
+      if (decodedTxn?.blobs?.length > 0) {
+        collectiveDayEntity.totalDAFees =
+          collectiveDayEntity.totalDAFees! + Number(decodedTxn.txFee)!;
+        collectiveDayEntity.totalDAFeesUSD =
+          collectiveDayEntity.totalDAFeesUSD! + feesUSD;
+        collectiveDayEntity.totalDataSubmissionCount =
+          collectiveDayEntity.totalDataSubmissionCount! + 1;
 
-      collectiveDayEntity.totalDAFees =
-        collectiveDayEntity.totalDAFees! + Number(decodedTxn.txFee)!;
-      collectiveDayEntity.totalDAFeesUSD =
-        collectiveDayEntity.totalDAFeesUSD! + feesUSD;
-      collectiveDayEntity.totalDataSubmissionCount =
-        collectiveDayEntity.totalDataSubmissionCount! + 1;
-
-      collectiveDayEntity.totalByteSize =
-        collectiveDayEntity.totalByteSize + Number(dataSubmissionSize);
-
+        collectiveDayEntity.totalByteSize =
+          collectiveDayEntity.totalByteSize + Number(dataSubmissionSize);
+      }
       collectiveDayEntity.totalFeesNative =
         collectiveDayEntity.totalFeesNative! + Number(decodedTxn.txFee!);
 
@@ -273,17 +273,17 @@ export async function handleCollectiveHourData(
 
       const fees = Number(decodedTxn.txFee);
       const feesUSD = fees * priceFeed.nativePrice;
+      if (decodedTxn?.blobs?.length > 0) {
+        collectiveHourEntity.totalDAFees =
+          collectiveHourEntity.totalDAFees! + Number(decodedTxn.txFee)!;
+        collectiveHourEntity.totalDAFeesUSD =
+          collectiveHourEntity.totalDAFeesUSD! + feesUSD;
+        collectiveHourEntity.totalDataSubmissionCount =
+          collectiveHourEntity.totalDataSubmissionCount! + 1;
 
-      collectiveHourEntity.totalDAFees =
-        collectiveHourEntity.totalDAFees! + Number(decodedTxn.txFee)!;
-      collectiveHourEntity.totalDAFeesUSD =
-        collectiveHourEntity.totalDAFeesUSD! + feesUSD;
-      collectiveHourEntity.totalDataSubmissionCount =
-        collectiveHourEntity.totalDataSubmissionCount! + 1;
-
-      collectiveHourEntity.totalByteSize =
-        collectiveHourEntity.totalByteSize + Number(dataSubmissionSize);
-
+        collectiveHourEntity.totalByteSize =
+          collectiveHourEntity.totalByteSize + Number(dataSubmissionSize);
+      }
       collectiveHourEntity.totalFeesNative =
         collectiveHourEntity.totalFeesNative! + Number(decodedTxn.txFee!);
 
