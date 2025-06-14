@@ -86,7 +86,7 @@ export async function handleAccount(
     accountEntity.totalFeesUSD = accountEntity.totalFeesUSD! + Number(feesUSD);
     accountEntity.lastPriceFeedId = priceFeed.id;
     accountEntity.endBlock = block.header.height;
-    logger.info(`New ACCOUNT SAVE::::::  ${JSON.stringify(accountEntity)}`);
+    logger.info(`New ACCOUNT SAVE::::::  ${JSON.stringify(accountEntity.id)}`);
     if (type === 1) {
       accountEntity.appId = appRecord!.id;
       accountEntity.attachedAppId = appRecord!.id;

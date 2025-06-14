@@ -23,7 +23,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
   const blockHash = block.blockId.hash;
   const priceData = await handleNewPriceMinute({ block });
 
-  logger.info(`PRICE DATA FOUND ::  ${JSON.stringify(priceData)}`);
+  logger.info(`PRICE DATA FOUND ::  ${JSON.stringify(priceData?.nativePrice)}`);
   logger.info(`BLOCK ::  ${height}`);
   for (let idx = 0; idx < txs.length; idx++) {
     const tx = txs[idx];

@@ -77,7 +77,9 @@ export async function handleNewPriceMinute({
       (existingPrice !== null || existingPrice !== undefined)
     ) {
       logger.info(
-        `PRICE FOR THIS MINUTE EXIST :: ${JSON.stringify(existingPrice)}`
+        `PRICE FOR THIS MINUTE EXIST :: ${JSON.stringify(
+          existingPrice.nativePrice
+        )}`
       );
       return existingPrice!;
     }

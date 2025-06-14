@@ -91,7 +91,7 @@ export async function handleApp(
 
     appEntity.lastPriceFeedId = priceFeed.id;
     appEntity.endBlock = block.header.height;
-    logger.info(`APP SAVE::::::  ${JSON.stringify(appEntity)}`);
+    logger.info(`APP SAVE::::::  ${JSON.stringify(appEntity.id)}`);
 
     // return appEntity;
     await appEntity.save();
