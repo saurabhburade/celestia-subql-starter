@@ -87,7 +87,7 @@ export const getDecodedTxData = (tx: TxData, index: number = 0): TxStats => {
         if (decodedType === "tx") {
           if (decodeAttrKey === "fee") {
             const [fee] = decodeAttrValue?.split("utia");
-            acc.txFee += Number(fee);
+            acc.txFee += Number(fee) / 1e6;
           }
         }
         if (decodeAttrKey === "signer") {
