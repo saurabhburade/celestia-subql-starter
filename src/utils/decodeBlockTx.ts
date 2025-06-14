@@ -50,11 +50,11 @@ export const getDecodedTxData = (tx: TxData, index: number = 0): TxStats => {
             "utf-8"
           );
 
-          logger.info(
-            `🚀 ~ decodeBlockTx.ts:55 ~ attr: ${decodedType} :: ${attrKey} :: ${
-              decodeAttrValue.length
-            } ::::  ${decodeAttrValue.length < 70 ? decodeAttrValue : ""}`
-          );
+          // logger.info(
+          //   `🚀 ~ decodeBlockTx.ts:55 ~ attr: ${decodedType} :: ${attrKey} :: ${
+          //     decodeAttrValue.length
+          //   } ::::  ${decodeAttrValue.length < 70 ? decodeAttrValue : ""}`
+          // );
           const attrValue = Buffer.from(
             attr.value.toString(),
             "base64"
