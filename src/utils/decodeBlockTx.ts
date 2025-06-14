@@ -1,6 +1,7 @@
+import { toHex } from "@cosmjs/encoding";
 import { TxData } from "@subql/types-cosmos";
 
-interface TxStats {
+export interface TxStats {
   nMessages: number; // Number of messages
   nEvents: number; // Number of events
   nTransfer: number; // Number of transfers
@@ -16,9 +17,10 @@ interface TxStats {
   gasWanted: number; // Gas used, optional
   signer: string; // Signer address, optional
   blobs: any[];
+  index: number;
 }
 
-export const getDecodedTxData = (tx: TxData): TxStats => {
+export const getDecodedTxData = (tx: TxData, index: number = 0): TxStats => {
   const code = tx?.code || 0;
   const codespace = tx?.codespace || "";
   const gasUsed = tx?.gasUsed ? Number(tx.gasUsed) : 0;
@@ -106,7 +108,7 @@ export const getDecodedTxData = (tx: TxData): TxStats => {
             if (nameSpaces?.length > 0) {
               JSON.parse(nameSpaces).forEach((ns: string, idx: number) => {
                 const prev = bbs[idx] || {};
-                bbs[idx] = { ...prev, namespace: ns };
+                bbs[idx] = { ...prev, namespace: toHex(Buffer.from(ns)) };
               });
             }
             acc.namespaces = [...acc.namespaces, ...nameSpaces];
@@ -172,9 +174,11 @@ export const getDecodedTxData = (tx: TxData): TxStats => {
       gasWanted: gasWanted,
       signer: "",
       blobs: [],
+      index,
     }
   );
   return {
     ...decodedData,
+    index,
   };
 };

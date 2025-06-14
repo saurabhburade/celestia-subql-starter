@@ -37,7 +37,7 @@ export async function handleAccount(
         totalDataSubmissionCount: 0,
         totalDataBlocksCount: 0,
         totalBlocksCount: 0,
-        totalExtrinsicCount: 0,
+        totalTxnCount: 0,
         totalFees: 0,
         totalFeesNative: 0,
         totalFeesUSD: 0,
@@ -78,7 +78,7 @@ export async function handleAccount(
     if (accountEntity.endBlock!.toString() != block.header.height.toString()) {
       accountEntity.totalBlocksCount = accountEntity.totalBlocksCount! + 1;
     }
-    accountEntity.totalExtrinsicCount = accountEntity.totalExtrinsicCount! + 1;
+    accountEntity.totalTxnCount = accountEntity.totalTxnCount! + 1;
     accountEntity.totalFees =
       accountEntity.totalFees! + Number(decodedTxn.txFee!);
     accountEntity.totalFeesNative =

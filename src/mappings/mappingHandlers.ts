@@ -27,7 +27,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
   for (let idx = 0; idx < txs.length; idx++) {
     const tx = txs[idx];
 
-    const decodedTx = getDecodedTxData(tx);
+    const decodedTx = getDecodedTxData(tx, idx);
 
     const transactionRecord = TransactionData.create({
       id: `${height}-${idx}`,
