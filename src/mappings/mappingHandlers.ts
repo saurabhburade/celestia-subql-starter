@@ -65,7 +65,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
           size: blob.blob_size || 0,
           signer: decodedTx.signer || "",
         });
-        await handleApp(tx, priceData!, block, 0, bEntity);
+        await handleApp(decodedTx, priceData!, block, 0, bEntity);
         blobs.push(bEntity);
       }
 

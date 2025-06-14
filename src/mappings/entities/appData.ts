@@ -9,17 +9,16 @@ import {
 } from "../../types";
 
 import { CosmosBlock, TxData } from "@subql/types-cosmos";
-import { getDecodedTxData } from "../../utils/decodeBlockTx";
+import { getDecodedTxData, TxStats } from "../../utils/decodeBlockTx";
 import { sha256 } from "@cosmjs/crypto";
 
 export async function handleApp(
-  transaction: TxData,
+  decodedTxn: TxStats,
   priceFeed: PriceFeedMinute,
   block: CosmosBlock,
   type: number = 0,
   blob: BlobData
 ) {
-  const decodedTxn = getDecodedTxData(transaction);
   try {
     let dataSubmissionSize = decodedTxn.totalBytes ? decodedTxn?.totalBytes : 0;
 
@@ -51,7 +50,7 @@ export async function handleApp(
         lastPriceFeedId: priceFeed.id,
         endBlock: 0,
         startBlock: block.block.header.height,
-        creationTxnId: sha256(transaction.data!).toString(),
+        creationTxnId: `${block.header.height}-${decodedTxn.index}`,
         lastUpdatedTxnId: "",
       });
     }
