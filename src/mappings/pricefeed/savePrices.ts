@@ -67,7 +67,7 @@ export async function handleNewPriceMinute({
       nativeDate: blockDate,
     });
     await priceFeedMinuteZero.save();
-    logger.info(`PRICE BEFORE GENESIS :: minuteId: ${minuteId}`);
+    // logger.info(`PRICE BEFORE GENESIS :: minuteId: ${minuteId}`);
     return priceFeedMinuteZero!;
   }
   try {
@@ -76,11 +76,11 @@ export async function handleNewPriceMinute({
       existingPrice &&
       (existingPrice !== null || existingPrice !== undefined)
     ) {
-      logger.info(
-        `PRICE FOR THIS MINUTE EXIST :: ${JSON.stringify(
-          existingPrice.nativePrice
-        )}`
-      );
+      // logger.info(
+      //   `PRICE FOR THIS MINUTE EXIST :: ${JSON.stringify(
+      //     existingPrice.nativePrice
+      //   )}`
+      // );
       return existingPrice!;
     }
     let priceFeedThisMinute;

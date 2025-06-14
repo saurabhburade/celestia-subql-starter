@@ -94,7 +94,7 @@ export async function handleApp(
 
     appEntity.lastPriceFeedId = priceFeed.id;
     appEntity.endBlock = block.header.height;
-    logger.info(`APP SAVE::::::  ${JSON.stringify(appEntity.id)}`);
+    // logger.info(`APP SAVE::::::  ${JSON.stringify(appEntity.id)}`);
 
     // return appEntity;
     await appEntity.save();
@@ -206,7 +206,7 @@ export async function handleAppDayData(
     appDayEntity.endBlock = block.header.height;
     appDayEntity.collectiveHourDataId = hourId?.toString();
 
-    logger.info(`APP DAY SAVE::::::  ${JSON.stringify(appDayEntity.id)}`);
+    // logger.info(`APP DAY SAVE::::::  ${JSON.stringify(appDayEntity.id)}`);
 
     // return appEntity;
     await appDayEntity.save();
@@ -307,7 +307,7 @@ export async function handleAppHourData(
     appHourEntity.lastPriceFeedId = priceFeed.id;
     appHourEntity.endBlock = block.header.height;
 
-    logger.info(`APP HOUR SAVE::::::  ${JSON.stringify(appHourEntity.id)}`);
+    // logger.info(`APP HOUR SAVE::::::  ${JSON.stringify(appHourEntity.id)}`);
 
     // return appEntity;
     await appHourEntity.save();

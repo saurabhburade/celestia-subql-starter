@@ -93,9 +93,9 @@ export async function handleCollective(
 
     collectiveEntity.lastPriceFeedId = priceFeed.id;
     collectiveEntity.endBlock = block.header.height;
-    logger.info(
-      `COLLECTIVE SAVE::::::  ${JSON.stringify(collectiveEntity.id)}`
-    );
+    // logger.info(
+    //   `COLLECTIVE SAVE::::::  ${JSON.stringify(collectiveEntity.id)}`
+    // );
 
     // return collectiveEntity;
     await collectiveEntity.save();
@@ -212,9 +212,9 @@ export async function handleCollectiveDayData(
 
     collectiveDayEntity.lastPriceFeedId = priceFeed.id;
     collectiveDayEntity.endBlock = block.header.height;
-    logger.info(
-      `COLLECTIVE DAY SAVE::::::  ${JSON.stringify(collectiveDayEntity.id)}`
-    );
+    // logger.info(
+    //   `COLLECTIVE DAY SAVE::::::  ${JSON.stringify(collectiveDayEntity.id)}`
+    // );
 
     // return collectiveEntity;
     await collectiveDayEntity.save();
@@ -320,9 +320,9 @@ export async function handleCollectiveHourData(
 
     collectiveHourEntity.lastPriceFeedId = priceFeed.id;
     collectiveHourEntity.endBlock = block.header.height;
-    logger.info(
-      `COLLECTIVE HOUR SAVE::::::  ${JSON.stringify(collectiveHourEntity.id)}`
-    );
+    // logger.info(
+    //   `COLLECTIVE HOUR SAVE::::::  ${JSON.stringify(collectiveHourEntity.id)}`
+    // );
 
     // return collectiveEntity;
     await collectiveHourEntity.save();
