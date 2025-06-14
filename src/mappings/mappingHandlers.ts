@@ -78,10 +78,10 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
       bdata.totalBlobTransactionCount += 1;
 
       const blobs: BlobData[] = [];
-      for (let idx = 0; idx < decodedTx.blobs.length; idx++) {
-        const blob = decodedTx.blobs[idx];
+      for (let idx2 = 0; idx2 < decodedTx.blobs.length; idx2++) {
+        const blob = decodedTx.blobs[idx2];
         const bEntity = BlobData.create({
-          id: `${height}-${idx}-${idx}`,
+          id: `${height}-${idx}-${idx2}`,
           data: "",
           namespaceId: blob.namespace || "",
           transactionId: transactionRecord.id || "",
