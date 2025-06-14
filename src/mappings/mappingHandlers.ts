@@ -33,7 +33,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
 
     const transactionRecord = TransactionData.create({
       id: `${height}-${idx}`,
-      blockHeight: height,
+      blockHeightId: height.toString(),
 
       denomination: "tia",
       amount: decodedTx.txFee,
