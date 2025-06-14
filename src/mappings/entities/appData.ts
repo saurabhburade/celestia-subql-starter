@@ -98,7 +98,7 @@ export async function handleApp(
 
     // return appEntity;
     await appEntity.save();
-    await handleAccount(decodedTxn, priceFeed!, block, 1);
+    await handleAccount(decodedTxn, priceFeed!, block, 1, appEntity);
 
     await handleAppDayData(decodedTxn, priceFeed, block, type, appEntity, blob);
     await handleAppHourData(
