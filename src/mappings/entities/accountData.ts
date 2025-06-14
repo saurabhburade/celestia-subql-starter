@@ -56,41 +56,37 @@ export async function handleAccount(
       (accountEntity.avgNativePrice! + priceFeed.nativeBlock) / 2;
 
     // const extrinsicType = `${decodedTxn.}_${methodData.method}`;
-    // const isDataSubmission = extrinsicType === "dataAvailability_submitData";
-    // const fees = Number(extrinsicRecord.fees);
-    // const feesUSD = fees * priceFeed.availPrice;
-    // if (isDataSubmission) {
-    //   accountEntity.totalDAFees =
-    //     accountEntity.totalDAFees! + Number(extrinsicRecord.fees)!;
-    //   accountEntity.totalDAFeesUSD = accountEntity.totalDAFeesUSD! + feesUSD;
-    //   accountEntity.totalDataSubmissionCount =
-    //     accountEntity.totalDataSubmissionCount! + 1;
+    const isDataSubmission = decodedTxn.blobs.length > 0;
+    const fees = Number(decodedTxn.txFee);
+    const feesUSD = fees * priceFeed.nativePrice;
+    if (isDataSubmission) {
+      accountEntity.totalDAFees =
+        accountEntity.totalDAFees! + Number(decodedTxn.txFee)!;
+      accountEntity.totalDAFeesUSD = accountEntity.totalDAFeesUSD! + feesUSD;
+      accountEntity.totalDataSubmissionCount =
+        accountEntity.totalDataSubmissionCount! + 1;
 
-    //   accountEntity.totalByteSize =
-    //     accountEntity.totalByteSize + Number(dataSubmissionSize);
-    //   if (
-    //     accountEntity.endBlock!.toString() !=
-    //     block.block.header.number.toNumber().toString()
-    //   ) {
-    //     accountEntity.totalDataBlocksCount =
-    //       accountEntity.totalDataBlocksCount! + 1;
-    //   }
-    // }
-    // if (
-    //   accountEntity.endBlock!.toString() !=
-    //   block.block.header.number.toNumber().toString()
-    // ) {
-    //   accountEntity.totalBlocksCount = accountEntity.totalBlocksCount! + 1;
-    // }
-    // accountEntity.totalExtrinsicCount = accountEntity.totalExtrinsicCount! + 1;
-    // accountEntity.totalFees =
-    //   accountEntity.totalFees! + Number(extrinsicRecord.fees!);
-    // accountEntity.totalFeesAvail =
-    //   accountEntity.totalFeesAvail! + Number(extrinsicRecord.fees!);
-    // accountEntity.totalFeesUSD = accountEntity.totalFeesUSD! + Number(feesUSD);
-    // accountEntity.lastPriceFeedId = priceFeed.id;
-    // accountEntity.endBlock = block.block.header.number.toNumber();
-    // logger.info(`New ACCOUNT SAVE::::::  ${JSON.stringify(accountEntity)}`);
+      accountEntity.totalByteSize =
+        accountEntity.totalByteSize + Number(dataSubmissionSize);
+      if (
+        accountEntity.endBlock!.toString() != block.header.height.toString()
+      ) {
+        accountEntity.totalDataBlocksCount =
+          accountEntity.totalDataBlocksCount! + 1;
+      }
+    }
+    if (accountEntity.endBlock!.toString() != block.header.height.toString()) {
+      accountEntity.totalBlocksCount = accountEntity.totalBlocksCount! + 1;
+    }
+    accountEntity.totalExtrinsicCount = accountEntity.totalExtrinsicCount! + 1;
+    accountEntity.totalFees =
+      accountEntity.totalFees! + Number(decodedTxn.txFee!);
+    accountEntity.totalFeesNative =
+      accountEntity.totalFeesNative! + Number(decodedTxn.txFee!);
+    accountEntity.totalFeesUSD = accountEntity.totalFeesUSD! + Number(feesUSD);
+    accountEntity.lastPriceFeedId = priceFeed.id;
+    accountEntity.endBlock = block.header.height;
+    logger.info(`New ACCOUNT SAVE::::::  ${JSON.stringify(accountEntity)}`);
     if (type === 1) {
       accountEntity.appId = appRecord!.id;
       accountEntity.attachedAppId = appRecord!.id;
