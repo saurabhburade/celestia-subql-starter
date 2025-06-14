@@ -4,6 +4,7 @@ import { SubstrateExtrinsic } from "@subql/types";
 import {
   AccountDayData,
   AccountEntity,
+  AccountHourData,
   AppEntity,
   PriceFeedMinute,
 } from "../../types";
@@ -99,6 +100,7 @@ export async function handleAccount(
     // return accountEntity;
     await accountEntity.save();
     await handleAccountDayData(decodedTxn, priceFeed, block, type, appRecord);
+    await handleAccountHourData(decodedTxn, priceFeed, block, type, appRecord);
   } catch (error) {
     logger.error(`New ACCOUNT SAVE ERROR::::::  ${error}`);
     throw error;
@@ -206,4 +208,108 @@ export async function handleAccountDayData(
   // }
   // return accountDayDataRecord;
   await accountDayDataRecord.save();
+}
+export async function handleAccountHourData(
+  decodedTxn: TxStats,
+  priceFeed: PriceFeedMinute,
+  block: CosmosBlock,
+  type: number = 0,
+  appRecord?: AppEntity
+) {
+  const blockDate = new Date(Number(block.header.time.getTime()));
+  const minuteId = Math.floor(blockDate.getTime() / 60000);
+  const dayId = Math.floor(blockDate.getTime() / 86400000);
+  const prevDayId = dayId - 1;
+  const hourId = Math.floor(blockDate.getTime() / 3600000); // Divide by milliseconds in an hour
+  const prevHourId = hourId - 1; // Divide by milliseconds in an hour
+  const id =
+    type === 1
+      ? `${decodedTxn.signer.toString()}-hourId-${hourId}-${appRecord!.id}`
+      : `${decodedTxn.signer.toString()}-hourId-${hourId}`;
+  const idPrev =
+    type === 1
+      ? `${decodedTxn.signer.toString()}-hourId-${prevHourId}-${appRecord!.id}`
+      : `${decodedTxn.signer.toString()}-hourId-${prevHourId}`;
+
+  const dataSubmissionSize = decodedTxn.totalBytes ? decodedTxn?.totalBytes : 0;
+
+  let accountHourDataRecord = await AccountHourData.get(id);
+
+  if (accountHourDataRecord === undefined || accountHourDataRecord === null) {
+    accountHourDataRecord = AccountHourData.create({
+      id: id,
+      accountId: decodedTxn.signer.toString(),
+      timestampLast: new Date(block.header.time.getTime()),
+      totalByteSize: 0,
+      timestampStart: new Date(block.header.time.getTime()),
+      prevHourDataId: idPrev,
+      avgNativePrice: priceFeed.nativePrice,
+      totalDAFees: 0,
+      totalDAFeesUSD: 0,
+      totalDataSubmissionCount: 0,
+      totalDataBlocksCount: 0,
+      totalBlocksCount: 0,
+      totalTxnCount: 0,
+      totalFees: 0,
+      totalFeesNative: 0,
+      totalFeesUSD: 0,
+      totalTransferCount: 0,
+      lastPriceFeedId: priceFeed.id,
+      endBlock: 0,
+      startBlock: block.block.header.height,
+      type,
+    });
+  }
+  if (type === 1) {
+    accountHourDataRecord.appId = appRecord!.id;
+    accountHourDataRecord.attachedAppId = appRecord!.id;
+  }
+
+  accountHourDataRecord.timestampLast = new Date(block.header.time.getTime());
+
+  accountHourDataRecord.avgNativePrice =
+    (accountHourDataRecord.avgNativePrice! + priceFeed.nativePrice) / 2;
+
+  const fees = Number(decodedTxn.txFee);
+  const feesUSD = fees * priceFeed.nativePrice;
+  if (decodedTxn?.blobs?.length > 0) {
+    accountHourDataRecord.totalDAFees =
+      accountHourDataRecord.totalDAFees! + Number(fees)!;
+    accountHourDataRecord.totalDAFeesUSD =
+      accountHourDataRecord.totalDAFeesUSD! + feesUSD;
+    accountHourDataRecord.totalDataSubmissionCount =
+      accountHourDataRecord.totalDataSubmissionCount! + 1;
+    accountHourDataRecord.totalByteSize =
+      accountHourDataRecord.totalByteSize + Number(dataSubmissionSize);
+    if (
+      accountHourDataRecord.endBlock!.toString() !=
+      block.block.header.height.toString()
+    ) {
+      accountHourDataRecord.totalDataBlocksCount =
+        accountHourDataRecord.totalDataBlocksCount! + 1;
+    }
+  }
+  if (
+    accountHourDataRecord.endBlock!.toString() !=
+    block.block.header.height.toString()
+  ) {
+    accountHourDataRecord.totalBlocksCount =
+      accountHourDataRecord.totalBlocksCount! + 1;
+  }
+  accountHourDataRecord.totalTxnCount =
+    accountHourDataRecord.totalTxnCount! + 1;
+  accountHourDataRecord.totalFees =
+    accountHourDataRecord.totalFees! + Number(fees!);
+  accountHourDataRecord.totalFeesNative =
+    accountHourDataRecord.totalFeesNative! + Number(fees!);
+  accountHourDataRecord.totalFeesUSD =
+    accountHourDataRecord.totalFeesUSD! + Number(feesUSD);
+  accountHourDataRecord.lastPriceFeedId = priceFeed.id;
+  accountHourDataRecord.endBlock = block.block.header.height;
+  // accountDayDataRecord.collectiveDayDataId = dayId?.toString();
+  // if (type === 1) {
+  //   await accountDayDataRecord.save();
+  // }
+  // return accountDayDataRecord;
+  await accountHourDataRecord.save();
 }
