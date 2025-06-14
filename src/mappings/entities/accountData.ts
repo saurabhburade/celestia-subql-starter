@@ -155,6 +155,7 @@ export async function handleAccountDayData(
       endBlock: 0,
       startBlock: block.block.header.height,
       type,
+      collectiveDayDataId: dayId?.toString(),
     });
   }
   if (type === 1) {
@@ -202,7 +203,7 @@ export async function handleAccountDayData(
     accountDayDataRecord.totalFeesUSD! + Number(feesUSD);
   accountDayDataRecord.lastPriceFeedId = priceFeed.id;
   accountDayDataRecord.endBlock = block.block.header.height;
-  accountDayDataRecord.collectiveDayDataId = dayId?.toString();
+
   // if (type === 1) {
   //   await accountDayDataRecord.save();
   // }
@@ -258,6 +259,7 @@ export async function handleAccountHourData(
       endBlock: 0,
       startBlock: block.block.header.height,
       type,
+      collectiveHourDataId: hourId.toString(),
     });
   }
   if (type === 1) {
@@ -306,7 +308,7 @@ export async function handleAccountHourData(
     accountHourDataRecord.totalFeesUSD! + Number(feesUSD);
   accountHourDataRecord.lastPriceFeedId = priceFeed.id;
   accountHourDataRecord.endBlock = block.block.header.height;
-  accountHourDataRecord.collectiveHourDataId = hourId?.toString();
+
   // if (type === 1) {
   //   await accountDayDataRecord.save();
   // }

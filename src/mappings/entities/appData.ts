@@ -161,6 +161,7 @@ export async function handleAppDayData(
         startBlock: block.block.header.height,
 
         lastUpdatedTxnId: "",
+        collectiveDayDataId: dayId?.toString(),
       });
     }
     if (appDayEntity.lastUpdatedTxnId !== blob.transactionId) {
@@ -201,7 +202,7 @@ export async function handleAppDayData(
     appDayEntity.lastPriceFeedId = priceFeed.id;
     appDayEntity.endBlock = block.header.height;
     appDayEntity.collectiveHourDataId = hourId?.toString();
-    appDayEntity.collectiveDayDataId = dayId?.toString();
+
     logger.info(`APP DAY SAVE::::::  ${JSON.stringify(appDayEntity.id)}`);
 
     // return appEntity;
@@ -260,6 +261,8 @@ export async function handleAppHourData(
         startBlock: block.block.header.height,
 
         lastUpdatedTxnId: "",
+        collectiveDayDataId: dayId?.toString(),
+        collectiveHourDataId: hourId?.toString(),
       });
     }
     if (appHourEntity.lastUpdatedTxnId !== blob.transactionId) {
@@ -300,8 +303,6 @@ export async function handleAppHourData(
 
     appHourEntity.lastPriceFeedId = priceFeed.id;
     appHourEntity.endBlock = block.header.height;
-    appHourEntity.collectiveHourDataId = hourId?.toString();
-    appHourEntity.collectiveDayDataId = dayId?.toString();
 
     logger.info(`APP HOUR SAVE::::::  ${JSON.stringify(appHourEntity.id)}`);
 
