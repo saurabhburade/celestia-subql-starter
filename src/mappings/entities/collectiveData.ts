@@ -106,6 +106,13 @@ export async function handleCollective(
       type,
       collectiveEntity
     );
+    await handleCollectiveHourData(
+      decodedTxn,
+      priceFeed,
+      block,
+      type,
+      collectiveEntity
+    );
   } catch (error) {
     logger.error(` COLLECTIVE SAVE ERROR::::::  ${error}`);
     throw error;
