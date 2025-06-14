@@ -39,7 +39,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
     totalBlockFeeUSD: 0,
     totalEventsCount: 0,
     totalSquareSize: 0,
-    totalTransactionCount: block.transactions.length,
+    totalTransactionCount: block.txs.length,
   });
   for (let idx = 0; idx < txs.length; idx++) {
     const tx = txs[idx];
