@@ -37,9 +37,9 @@ type BlockData @entity {
 
   totalTransactionCount: Float!
 
-  avgTIAPrice: Float!
-  currentTIAPrice: Float!
-  totalBlockFeeTIA: Float!
+  avgNativePrice: Float!
+  currentNativePrice: Float!
+  totalBlockFeeNatve: Float!
   totalBlockFeeUSD: Float!
 
   timestamp: Float
@@ -67,7 +67,7 @@ type TransactionData @entity {
   amount: Float!
   denomination: String!
 
-  txFeeTIA: Float!
+  txFeeNative: Float!
   nMessages: Float!
   nEvents: Float!
   nDataSubs: Float!
@@ -87,16 +87,75 @@ type Block @entity {
   nEvents: Int
   nBlobs: Int
   blobSize: Int
-  totalFeesTIA: Float
+  totalFeesNative: Float
   totalFeesUSD: Float
   version: String
-  tiaPrice: Float!
+  nativePrice: Float!
 }
 
 type PriceFeedMinute @entity {
   id: ID!
   date: Date
-  tiaPrice: Float!
-  tiaBlock: Int!
-  tiaDate: Date
+  nativePrice: Float!
+  nativeBlock: Int!
+  nativeDate: Date
+}
+
+type AccountEntity @entity {
+  id: ID!
+  type: Float
+  attachedAppId: String
+  app: AppEntity
+  validator: Boolean
+  validatorSessionParticipated: Float
+  createdAt: Date!
+  updatedAt: Date!
+  timestampCreation: Date! @index
+  address: String! @index
+  totalByteSize: Float! @index
+  totalFees: Float
+  totalDAFees: Float
+  totalDAFeesUSD: Float
+  totalFeesUSD: Float
+  totalFeesNative: Float
+  totalDataSubmissionCount: Float
+  totalTransferCount: Float
+  totalExtrinsicCount: Float
+  totalBlocksCount: Float
+  totalDataBlocksCount: Float
+  lastPriceFeed: PriceFeedMinute
+  timestampLast: Date! @index
+  avgNativePrice: Float
+  # accountDayData: [AccountDayData] @derivedFrom(field: "account")
+  # accountHourData: [AccountHourData] @derivedFrom(field: "account")
+  startBlock: Float
+  endBlock: Float
+}
+
+type AppEntity @entity {
+  id: ID!
+  createdAt: Date!
+  updatedAt: Date!
+  creationRawData: String
+  creationTxn: TransactionData
+  timestampCreation: Date! @index
+  owner: String! @index
+  totalByteSize: Float! @index
+  totalDAFees: Float
+  totalDAFeesUSD: Float
+  totalFeesUSD: Float
+  totalFeesNative: Float
+  totalDataSubmissionCount: Float
+  totalTransferCount: Float
+  totalExtrinsicCount: Float
+  totalBlocksCount: Float
+  totalDataBlocksCount: Float
+  lastPriceFeed: PriceFeedMinute
+  timestampLast: Date! @index
+  avgNativePrice: Float
+  # appDayData: [AppDayData] @derivedFrom(field: "app")
+  # appHourData: [AppHourData] @derivedFrom(field: "app")
+  startBlock: Float
+  endBlock: Float
+  name: String!
 }

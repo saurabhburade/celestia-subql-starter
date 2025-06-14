@@ -42,7 +42,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
 
       totalBytes: decodedTx.totalBytes,
       nEvents: decodedTx.nEvents,
-      txFeeTIA: decodedTx.txFee,
+      txFeeNative: decodedTx.txFee,
       signer: decodedTx.signer,
       // blockHeight: BigInt(block.block.header.height),
       timestamp: block.block.header.time.getTime(),

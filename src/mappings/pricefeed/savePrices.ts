@@ -57,14 +57,14 @@ export async function handleNewPriceMinute({
   const currentMinuteId = Math.floor(new Date().getTime() / 60000);
   let ethBlockContext = {};
   // SKIP PRICES BEFORE GENESIS MINUTEID 28312800
-  const tiaBlock = block.block.header.height;
+  const nativeBlock = block.block.header.height;
   if (minuteId < 28312800) {
     const priceFeedMinuteZero = PriceFeedMinute.create({
       id: minuteId.toString(),
-      tiaBlock: tiaBlock,
-      tiaPrice: 2.4,
+      nativeBlock: nativeBlock,
+      nativePrice: 2.4,
       date: blockDate,
-      tiaDate: blockDate,
+      nativeDate: blockDate,
     });
     await priceFeedMinuteZero.save();
     logger.info(`PRICE BEFORE GENESIS :: minuteId: ${minuteId}`);
@@ -95,10 +95,10 @@ export async function handleNewPriceMinute({
           // SAVE MONTHLY DATA FROM LOCAL FILES
           const priceForMinute = PriceFeedMinute.create({
             id: element?.minuteId?.toString(),
-            tiaBlock: tiaBlock,
-            tiaPrice: element?.avgPrice,
+            nativeBlock: nativeBlock,
+            nativePrice: element?.avgPrice,
             date: element?.timestampF,
-            tiaDate: blockDate,
+            nativeDate: blockDate,
           });
           pricesToSave.push(priceForMinute);
 
@@ -138,10 +138,10 @@ export async function handleNewPriceMinute({
 
             const priceForMinute = PriceFeedMinute.create({
               id: minuteIdOhlc?.toString(),
-              tiaBlock: tiaBlock,
-              tiaPrice: avgPrice,
+              nativeBlock: nativeBlock,
+              nativePrice: avgPrice,
               date: new Date(new Date(Number(timestamp)).getTime()),
-              tiaDate: blockDate,
+              nativeDate: blockDate,
             });
             pricesToSave.push(priceForMinute);
             // consider 2 mins diff if any
@@ -175,10 +175,10 @@ export async function handleNewPriceMinute({
           ) {
             const priceForMinute = PriceFeedMinute.create({
               id: minuteId?.toString(),
-              tiaBlock: tiaBlock,
-              tiaPrice: value,
+              nativeBlock: nativeBlock,
+              nativePrice: value,
               date: new Date(timestamp),
-              tiaDate: blockDate,
+              nativeDate: blockDate,
             });
             await priceForMinute.save();
             priceFeedThisMinute = priceForMinute;
@@ -204,10 +204,10 @@ export async function handleNewPriceMinute({
           ) {
             const priceForMinute = PriceFeedMinute.create({
               id: minuteId?.toString(),
-              tiaBlock: tiaBlock,
-              tiaPrice: usd,
+              nativeBlock: nativeBlock,
+              nativePrice: usd,
               date: new Date(Number(last_updated_at) * 1000),
-              tiaDate: blockDate,
+              nativeDate: blockDate,
             });
             await priceForMinute.save();
             priceFeedThisMinute = priceForMinute;
