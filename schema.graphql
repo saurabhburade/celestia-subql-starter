@@ -62,7 +62,7 @@ type TransactionData @entity {
   blockHeight: Float! @index
   timestamp: Float!
 
-  signer: String!
+  signer: AccountEntity
 
   amount: Float!
   denomination: String!
@@ -130,6 +130,7 @@ type AccountEntity @entity {
   accountHourData: [AccountHourData] @derivedFrom(field: "account")
   startBlock: Float
   endBlock: Float
+  transactions: [TransactionData] @derivedFrom(field: "signer")
 }
 type AccountDayData @entity {
   id: ID!
@@ -294,7 +295,6 @@ type CollectiveData @entity {
   collectiveDayData: [CollectiveDayData] @derivedFrom(field: "collectiveData")
   collectiveHourData: [CollectiveHourData] @derivedFrom(field: "collectiveData")
   lastUpdatedTxnId: String!
-
 }
 type CollectiveDayData @entity {
   id: ID!
@@ -324,7 +324,6 @@ type CollectiveDayData @entity {
 
   collectiveData: CollectiveData
   lastUpdatedTxnId: String!
-
 }
 type CollectiveHourData @entity {
   id: ID!
@@ -354,5 +353,4 @@ type CollectiveHourData @entity {
     @derivedFrom(field: "collectiveHourData")
   collectiveData: CollectiveData
   lastUpdatedTxnId: String!
-
 }
