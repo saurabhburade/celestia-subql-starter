@@ -40,7 +40,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
     totalEventsCount: 0,
     totalSquareSize: 0,
     totalTransactionCount: block.txs.length,
-    timestamp: block.block.header.time.getTime(),
+    timestamp: block.header.time.getTime(),
   });
   for (let idx = 0; idx < txs.length; idx++) {
     const tx = txs[idx];
