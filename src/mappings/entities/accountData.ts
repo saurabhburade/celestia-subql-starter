@@ -53,7 +53,7 @@ export async function handleAccount(
 
     accountEntity.updatedAt = new Date(block.header.time.getTime());
     accountEntity.avgNativePrice =
-      (accountEntity.avgNativePrice! + priceFeed.nativeBlock) / 2;
+      (accountEntity.avgNativePrice! + priceFeed.nativePrice) / 2;
 
     // const extrinsicType = `${decodedTxn.}_${methodData.method}`;
     const isDataSubmission = decodedTxn.blobs.length > 0;
