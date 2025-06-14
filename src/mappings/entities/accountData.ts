@@ -1,19 +1,23 @@
 "use strict";
 
 import { SubstrateExtrinsic } from "@subql/types";
-import { AccountEntity, AppEntity, PriceFeedMinute } from "../../types";
+import {
+  AccountDayData,
+  AccountEntity,
+  AppEntity,
+  PriceFeedMinute,
+} from "../../types";
 
 import { CosmosBlock, TxData } from "@subql/types-cosmos";
-import { getDecodedTxData } from "../../utils/decodeBlockTx";
+import { getDecodedTxData, TxStats } from "../../utils/decodeBlockTx";
 
 export async function handleAccount(
-  transaction: TxData,
+  decodedTxn: TxStats,
   priceFeed: PriceFeedMinute,
   block: CosmosBlock,
   type: number = 0,
   appRecord?: AppEntity
 ) {
-  const decodedTxn = getDecodedTxData(transaction);
   try {
     let dataSubmissionSize = decodedTxn.totalBytes ? decodedTxn?.totalBytes : 0;
     const id =
@@ -94,8 +98,112 @@ export async function handleAccount(
     }
     // return accountEntity;
     await accountEntity.save();
+    await handleAccountDayData(decodedTxn, priceFeed, block, type, appRecord);
   } catch (error) {
     logger.error(`New ACCOUNT SAVE ERROR::::::  ${error}`);
     throw error;
   }
+}
+
+export async function handleAccountDayData(
+  decodedTxn: TxStats,
+  priceFeed: PriceFeedMinute,
+  block: CosmosBlock,
+  type: number = 0,
+  appRecord?: AppEntity
+) {
+  const blockDate = new Date(Number(block.header.time.getTime()));
+  const minuteId = Math.floor(blockDate.getTime() / 60000);
+  const dayId = Math.floor(blockDate.getTime() / 86400000);
+  const prevDayId = dayId - 1;
+
+  const id =
+    type === 1
+      ? `${decodedTxn.signer.toString()}-dayId-${dayId}-${appRecord!.id}`
+      : `${decodedTxn.signer.toString()}-dayId-${dayId}`;
+  const idPrev =
+    type === 1
+      ? `${decodedTxn.signer.toString()}-dayId-${prevDayId}-${appRecord!.id}`
+      : `${decodedTxn.signer.toString()}-dayId-${prevDayId}`;
+
+  const dataSubmissionSize = decodedTxn.totalBytes ? decodedTxn?.totalBytes : 0;
+
+  let accountDayDataRecord = await AccountDayData.get(id);
+
+  if (accountDayDataRecord === undefined || accountDayDataRecord === null) {
+    accountDayDataRecord = AccountDayData.create({
+      id: id,
+      accountId: decodedTxn.signer.toString(),
+      timestampLast: new Date(block.header.time.getTime()),
+      totalByteSize: 0,
+      timestampStart: new Date(block.header.time.getTime()),
+      prevDayDataId: idPrev,
+      avgNativePrice: priceFeed.nativePrice,
+      totalDAFees: 0,
+      totalDAFeesUSD: 0,
+      totalDataSubmissionCount: 0,
+      totalDataBlocksCount: 0,
+      totalBlocksCount: 0,
+      totalTxnCount: 0,
+      totalFees: 0,
+      totalFeesNative: 0,
+      totalFeesUSD: 0,
+      totalTransferCount: 0,
+      lastPriceFeedId: priceFeed.id,
+      endBlock: 0,
+      startBlock: block.block.header.height,
+      type,
+    });
+  }
+  if (type === 1) {
+    accountDayDataRecord.appId = appRecord!.id;
+    accountDayDataRecord.attachedAppId = appRecord!.id;
+  }
+
+  accountDayDataRecord.timestampLast = new Date(block.header.time.getTime());
+
+  accountDayDataRecord.avgNativePrice =
+    (accountDayDataRecord.avgNativePrice! + priceFeed.nativePrice) / 2;
+
+  const fees = Number(decodedTxn.txFee);
+  const feesUSD = fees * priceFeed.nativePrice;
+  if (decodedTxn?.blobs?.length > 0) {
+    accountDayDataRecord.totalDAFees =
+      accountDayDataRecord.totalDAFees! + Number(fees)!;
+    accountDayDataRecord.totalDAFeesUSD =
+      accountDayDataRecord.totalDAFeesUSD! + feesUSD;
+    accountDayDataRecord.totalDataSubmissionCount =
+      accountDayDataRecord.totalDataSubmissionCount! + 1;
+    accountDayDataRecord.totalByteSize =
+      accountDayDataRecord.totalByteSize + Number(dataSubmissionSize);
+    if (
+      accountDayDataRecord.endBlock!.toString() !=
+      block.block.header.height.toString()
+    ) {
+      accountDayDataRecord.totalDataBlocksCount =
+        accountDayDataRecord.totalDataBlocksCount! + 1;
+    }
+  }
+  if (
+    accountDayDataRecord.endBlock!.toString() !=
+    block.block.header.height.toString()
+  ) {
+    accountDayDataRecord.totalBlocksCount =
+      accountDayDataRecord.totalBlocksCount! + 1;
+  }
+  accountDayDataRecord.totalTxnCount = accountDayDataRecord.totalTxnCount! + 1;
+  accountDayDataRecord.totalFees =
+    accountDayDataRecord.totalFees! + Number(fees!);
+  accountDayDataRecord.totalFeesNative =
+    accountDayDataRecord.totalFeesNative! + Number(fees!);
+  accountDayDataRecord.totalFeesUSD =
+    accountDayDataRecord.totalFeesUSD! + Number(feesUSD);
+  accountDayDataRecord.lastPriceFeedId = priceFeed.id;
+  accountDayDataRecord.endBlock = block.block.header.height;
+  // accountDayDataRecord.collectiveDayDataId = dayId?.toString();
+  // if (type === 1) {
+  //   await accountDayDataRecord.save();
+  // }
+  // return accountDayDataRecord;
+  await accountDayDataRecord.save();
 }
