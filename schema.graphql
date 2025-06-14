@@ -43,6 +43,7 @@ type BlockData @entity {
   totalBlockFeeUSD: Float!
 
   timestamp: Float
+  transactions: [TransactionData] @derivedFrom(field: "blockHeight")
 }
 type BlobData @entity {
   id: ID!
@@ -59,7 +60,7 @@ type BlobData @entity {
 type TransactionData @entity {
   id: ID!
   hash: String! @index
-  blockHeight: Float! @index
+  blockHeight: BlockData
   timestamp: Float!
 
   signer: AccountEntity
