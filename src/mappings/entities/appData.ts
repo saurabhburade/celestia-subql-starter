@@ -3,7 +3,9 @@
 import { SubstrateExtrinsic } from "@subql/types";
 import {
   AccountEntity,
+  AppDayData,
   AppEntity,
+  AppHourData,
   BlobData,
   PriceFeedMinute,
 } from "../../types";
@@ -95,8 +97,202 @@ export async function handleApp(
 
     // return appEntity;
     await appEntity.save();
+    await handleAppDayData(decodedTxn, priceFeed, block, type, appEntity, blob);
   } catch (error) {
     logger.error(` APP SAVE ERROR::::::  ${error}`);
+    throw error;
+  }
+}
+
+export async function handleAppDayData(
+  decodedTxn: TxStats,
+  priceFeed: PriceFeedMinute,
+  block: CosmosBlock,
+  type: number = 0,
+  appData: AppEntity,
+  blob: BlobData
+) {
+  const blockDate = new Date(Number(block.header.time.getTime()));
+  const minuteId = Math.floor(blockDate.getTime() / 60000);
+  const dayId = Math.floor(blockDate.getTime() / 86400000);
+  const prevDayId = dayId - 1;
+  try {
+    let dataSubmissionSize = decodedTxn.totalBytes ? decodedTxn?.totalBytes : 0;
+
+    const id = `${appData.id}-dayId-${dayId}`;
+    const previd = `${appData.id}-dayId-${prevDayId}`;
+
+    let appDayEntity = await AppDayData.get(id);
+
+    if (appDayEntity === undefined || appDayEntity === null) {
+      appDayEntity = AppDayData.create({
+        id: id,
+        appId: appData.id,
+        timestampStart: new Date(block.header.time.getTime()),
+        attachedAppId: appData.id,
+        prevDayDataId: previd,
+        totalDataAccountsCount: 0,
+        totalFees: 0,
+        type: 0,
+        timestampLast: new Date(block.header.time.getTime()),
+        totalByteSize: 0,
+        avgNativePrice: priceFeed.nativePrice,
+        totalDAFees: 0,
+        totalDAFeesUSD: 0,
+        totalDataSubmissionCount: 0,
+        totalDataBlocksCount: 0,
+        totalBlocksCount: 0,
+        totalTxnCount: 0,
+        totalFeesNative: 0,
+        totalFeesUSD: 0,
+        totalTransferCount: 0,
+        lastPriceFeedId: priceFeed.id,
+        endBlock: 0,
+        startBlock: block.block.header.height,
+
+        lastUpdatedTxnId: "",
+      });
+    }
+    if (appDayEntity.lastUpdatedTxnId !== blob.transactionId) {
+      appDayEntity.lastUpdatedTxnId = blob.transactionId!;
+      appDayEntity.totalTxnCount! += 1;
+
+      const fees = Number(decodedTxn.txFee);
+      const feesUSD = fees * priceFeed.nativePrice;
+
+      appDayEntity.totalDAFees =
+        appDayEntity.totalDAFees! + Number(decodedTxn.txFee)!;
+      appDayEntity.totalDAFeesUSD = appDayEntity.totalDAFeesUSD! + feesUSD;
+      appDayEntity.totalDataSubmissionCount =
+        appDayEntity.totalDataSubmissionCount! + 1;
+
+      appDayEntity.totalByteSize =
+        appDayEntity.totalByteSize + Number(dataSubmissionSize);
+
+      appDayEntity.totalFeesNative =
+        appDayEntity.totalFeesNative! + Number(decodedTxn.txFee!);
+
+      appDayEntity.totalFeesUSD = appDayEntity.totalFeesUSD! + Number(feesUSD);
+    }
+    appDayEntity.timestampLast = new Date(block.header.time.getTime());
+
+    appDayEntity.avgNativePrice =
+      (appDayEntity.avgNativePrice! + priceFeed.nativePrice) / 2;
+
+    if (appDayEntity.endBlock!.toString() != block.header.height.toString()) {
+      appDayEntity.totalDataBlocksCount =
+        appDayEntity.totalDataBlocksCount! + 1;
+    }
+
+    if (appDayEntity.endBlock!.toString() != block.header.height.toString()) {
+      appDayEntity.totalBlocksCount = appDayEntity.totalBlocksCount! + 1;
+    }
+
+    appDayEntity.lastPriceFeedId = priceFeed.id;
+    appDayEntity.endBlock = block.header.height;
+    logger.info(`APP DAY SAVE::::::  ${JSON.stringify(appDayEntity.id)}`);
+
+    // return appEntity;
+    await appDayEntity.save();
+  } catch (error) {
+    logger.error(` APP DAY SAVE ERROR::::::  ${error}`);
+    throw error;
+  }
+}
+export async function handleAppHourData(
+  decodedTxn: TxStats,
+  priceFeed: PriceFeedMinute,
+  block: CosmosBlock,
+  type: number = 0,
+  appData: AppEntity,
+  blob: BlobData
+) {
+  const blockDate = new Date(Number(block.header.time.getTime()));
+  const minuteId = Math.floor(blockDate.getTime() / 60000);
+  const dayId = Math.floor(blockDate.getTime() / 86400000);
+  const prevDayId = dayId - 1;
+  const hourId = Math.floor(blockDate.getTime() / 3600000); // Divide by milliseconds in an hour
+  const prevHourId = hourId - 1; // Divide by milliseconds in an hour
+  try {
+    let dataSubmissionSize = decodedTxn.totalBytes ? decodedTxn?.totalBytes : 0;
+
+    const id = `${appData.id}-hourId-${hourId}`;
+    const previd = `${appData.id}-hourId-${prevHourId}`;
+
+    let appDayEntity = await AppHourData.get(id);
+
+    if (appDayEntity === undefined || appDayEntity === null) {
+      appDayEntity = AppHourData.create({
+        id: id,
+        appId: appData.id,
+        timestampStart: new Date(block.header.time.getTime()),
+        attachedAppId: appData.id,
+        prevHourDataId: previd,
+        totalDataAccountsCount: 0,
+        totalFees: 0,
+        type: 0,
+        timestampLast: new Date(block.header.time.getTime()),
+        totalByteSize: 0,
+        avgNativePrice: priceFeed.nativePrice,
+        totalDAFees: 0,
+        totalDAFeesUSD: 0,
+        totalDataSubmissionCount: 0,
+        totalDataBlocksCount: 0,
+        totalBlocksCount: 0,
+        totalTxnCount: 0,
+        totalFeesNative: 0,
+        totalFeesUSD: 0,
+        totalTransferCount: 0,
+        lastPriceFeedId: priceFeed.id,
+        endBlock: 0,
+        startBlock: block.block.header.height,
+
+        lastUpdatedTxnId: "",
+      });
+    }
+    if (appDayEntity.lastUpdatedTxnId !== blob.transactionId) {
+      appDayEntity.lastUpdatedTxnId = blob.transactionId!;
+      appDayEntity.totalTxnCount! += 1;
+
+      const fees = Number(decodedTxn.txFee);
+      const feesUSD = fees * priceFeed.nativePrice;
+
+      appDayEntity.totalDAFees =
+        appDayEntity.totalDAFees! + Number(decodedTxn.txFee)!;
+      appDayEntity.totalDAFeesUSD = appDayEntity.totalDAFeesUSD! + feesUSD;
+      appDayEntity.totalDataSubmissionCount =
+        appDayEntity.totalDataSubmissionCount! + 1;
+
+      appDayEntity.totalByteSize =
+        appDayEntity.totalByteSize + Number(dataSubmissionSize);
+
+      appDayEntity.totalFeesNative =
+        appDayEntity.totalFeesNative! + Number(decodedTxn.txFee!);
+
+      appDayEntity.totalFeesUSD = appDayEntity.totalFeesUSD! + Number(feesUSD);
+    }
+    appDayEntity.timestampLast = new Date(block.header.time.getTime());
+
+    appDayEntity.avgNativePrice =
+      (appDayEntity.avgNativePrice! + priceFeed.nativePrice) / 2;
+
+    if (appDayEntity.endBlock!.toString() != block.header.height.toString()) {
+      appDayEntity.totalDataBlocksCount =
+        appDayEntity.totalDataBlocksCount! + 1;
+    }
+
+    if (appDayEntity.endBlock!.toString() != block.header.height.toString()) {
+      appDayEntity.totalBlocksCount = appDayEntity.totalBlocksCount! + 1;
+    }
+
+    appDayEntity.lastPriceFeedId = priceFeed.id;
+    appDayEntity.endBlock = block.header.height;
+    logger.info(`APP HOUR SAVE::::::  ${JSON.stringify(appDayEntity.id)}`);
+
+    // return appEntity;
+    await appDayEntity.save();
+  } catch (error) {
+    logger.error(` APP HOUR SAVE ERROR::::::  ${error}`);
     throw error;
   }
 }

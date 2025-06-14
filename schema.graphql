@@ -214,3 +214,58 @@ type AppEntity @entity {
   name: String!
   lastUpdatedTxnId: String!
 }
+
+type AppDayData @entity {
+  id: ID!
+  type: Float
+  attachedAppId: String
+  app: AppEntity! @index
+  totalByteSize: Float!
+  totalFees: Float
+  totalDAFees: Float
+  totalDAFeesUSD: Float
+  totalFeesUSD: Float
+  totalFeesNative: Float
+  totalDataSubmissionCount: Float
+  totalTransferCount: Float
+  totalTxnCount: Float
+  totalBlocksCount: Float
+  totalDataBlocksCount: Float
+  totalDataAccountsCount: Float
+  lastPriceFeed: PriceFeedMinute
+  timestampLast: Date! @index
+  timestampStart: Date!
+  startBlock: Float
+  endBlock: Float
+  avgNativePrice: Float
+  prevDayData: AppDayData
+  lastUpdatedTxnId: String!
+  # collectiveDayData: CollectiveDayData
+}
+type AppHourData @entity {
+  id: ID!
+  type: Float
+  attachedAppId: String
+  app: AppEntity! @index
+  totalByteSize: Float!
+  totalFees: Float
+  totalDAFees: Float
+  totalDAFeesUSD: Float
+  totalFeesUSD: Float
+  totalFeesNative: Float
+  totalDataSubmissionCount: Float
+  totalTransferCount: Float
+  totalTxnCount: Float
+  totalBlocksCount: Float
+  totalDataBlocksCount: Float
+  totalDataAccountsCount: Float
+  lastPriceFeed: PriceFeedMinute
+  timestampLast: Date! @index
+  timestampStart: Date!
+  startBlock: Float
+  endBlock: Float
+  avgNativePrice: Float
+  prevHourData: AppHourData
+  # collectiveDayData: CollectiveDayData
+  lastUpdatedTxnId: String!
+}
