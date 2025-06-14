@@ -79,10 +79,6 @@ const project: CosmosProject = {
         file: "./dist/index.js",
         handlers: [
           {
-            handler: "handleMessage",
-            kind: CosmosHandlerKind.Message,
-          },
-          {
             handler: "handleBlock",
             kind: CosmosHandlerKind.Block,
           },
