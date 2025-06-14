@@ -98,6 +98,14 @@ export async function handleApp(
     // return appEntity;
     await appEntity.save();
     await handleAppDayData(decodedTxn, priceFeed, block, type, appEntity, blob);
+    await handleAppHourData(
+      decodedTxn,
+      priceFeed,
+      block,
+      type,
+      appEntity,
+      blob
+    );
   } catch (error) {
     logger.error(` APP SAVE ERROR::::::  ${error}`);
     throw error;
@@ -115,6 +123,8 @@ export async function handleAppDayData(
   const blockDate = new Date(Number(block.header.time.getTime()));
   const minuteId = Math.floor(blockDate.getTime() / 60000);
   const dayId = Math.floor(blockDate.getTime() / 86400000);
+  const hourId = Math.floor(blockDate.getTime() / 3600000); // Divide by milliseconds in an hour
+
   const prevDayId = dayId - 1;
   try {
     let dataSubmissionSize = decodedTxn.totalBytes ? decodedTxn?.totalBytes : 0;
@@ -190,6 +200,8 @@ export async function handleAppDayData(
 
     appDayEntity.lastPriceFeedId = priceFeed.id;
     appDayEntity.endBlock = block.header.height;
+    appDayEntity.collectiveHourDataId = hourId?.toString();
+    appDayEntity.collectiveDayDataId = dayId?.toString();
     logger.info(`APP DAY SAVE::::::  ${JSON.stringify(appDayEntity.id)}`);
 
     // return appEntity;
@@ -219,10 +231,10 @@ export async function handleAppHourData(
     const id = `${appData.id}-hourId-${hourId}`;
     const previd = `${appData.id}-hourId-${prevHourId}`;
 
-    let appDayEntity = await AppHourData.get(id);
+    let appHourEntity = await AppHourData.get(id);
 
-    if (appDayEntity === undefined || appDayEntity === null) {
-      appDayEntity = AppHourData.create({
+    if (appHourEntity === undefined || appHourEntity === null) {
+      appHourEntity = AppHourData.create({
         id: id,
         appId: appData.id,
         timestampStart: new Date(block.header.time.getTime()),
@@ -250,47 +262,51 @@ export async function handleAppHourData(
         lastUpdatedTxnId: "",
       });
     }
-    if (appDayEntity.lastUpdatedTxnId !== blob.transactionId) {
-      appDayEntity.lastUpdatedTxnId = blob.transactionId!;
-      appDayEntity.totalTxnCount! += 1;
+    if (appHourEntity.lastUpdatedTxnId !== blob.transactionId) {
+      appHourEntity.lastUpdatedTxnId = blob.transactionId!;
+      appHourEntity.totalTxnCount! += 1;
 
       const fees = Number(decodedTxn.txFee);
       const feesUSD = fees * priceFeed.nativePrice;
 
-      appDayEntity.totalDAFees =
-        appDayEntity.totalDAFees! + Number(decodedTxn.txFee)!;
-      appDayEntity.totalDAFeesUSD = appDayEntity.totalDAFeesUSD! + feesUSD;
-      appDayEntity.totalDataSubmissionCount =
-        appDayEntity.totalDataSubmissionCount! + 1;
+      appHourEntity.totalDAFees =
+        appHourEntity.totalDAFees! + Number(decodedTxn.txFee)!;
+      appHourEntity.totalDAFeesUSD = appHourEntity.totalDAFeesUSD! + feesUSD;
+      appHourEntity.totalDataSubmissionCount =
+        appHourEntity.totalDataSubmissionCount! + 1;
 
-      appDayEntity.totalByteSize =
-        appDayEntity.totalByteSize + Number(dataSubmissionSize);
+      appHourEntity.totalByteSize =
+        appHourEntity.totalByteSize + Number(dataSubmissionSize);
 
-      appDayEntity.totalFeesNative =
-        appDayEntity.totalFeesNative! + Number(decodedTxn.txFee!);
+      appHourEntity.totalFeesNative =
+        appHourEntity.totalFeesNative! + Number(decodedTxn.txFee!);
 
-      appDayEntity.totalFeesUSD = appDayEntity.totalFeesUSD! + Number(feesUSD);
+      appHourEntity.totalFeesUSD =
+        appHourEntity.totalFeesUSD! + Number(feesUSD);
     }
-    appDayEntity.timestampLast = new Date(block.header.time.getTime());
+    appHourEntity.timestampLast = new Date(block.header.time.getTime());
 
-    appDayEntity.avgNativePrice =
-      (appDayEntity.avgNativePrice! + priceFeed.nativePrice) / 2;
+    appHourEntity.avgNativePrice =
+      (appHourEntity.avgNativePrice! + priceFeed.nativePrice) / 2;
 
-    if (appDayEntity.endBlock!.toString() != block.header.height.toString()) {
-      appDayEntity.totalDataBlocksCount =
-        appDayEntity.totalDataBlocksCount! + 1;
-    }
-
-    if (appDayEntity.endBlock!.toString() != block.header.height.toString()) {
-      appDayEntity.totalBlocksCount = appDayEntity.totalBlocksCount! + 1;
+    if (appHourEntity.endBlock!.toString() != block.header.height.toString()) {
+      appHourEntity.totalDataBlocksCount =
+        appHourEntity.totalDataBlocksCount! + 1;
     }
 
-    appDayEntity.lastPriceFeedId = priceFeed.id;
-    appDayEntity.endBlock = block.header.height;
-    logger.info(`APP HOUR SAVE::::::  ${JSON.stringify(appDayEntity.id)}`);
+    if (appHourEntity.endBlock!.toString() != block.header.height.toString()) {
+      appHourEntity.totalBlocksCount = appHourEntity.totalBlocksCount! + 1;
+    }
+
+    appHourEntity.lastPriceFeedId = priceFeed.id;
+    appHourEntity.endBlock = block.header.height;
+    appHourEntity.collectiveHourDataId = hourId?.toString();
+    appHourEntity.collectiveDayDataId = dayId?.toString();
+
+    logger.info(`APP HOUR SAVE::::::  ${JSON.stringify(appHourEntity.id)}`);
 
     // return appEntity;
-    await appDayEntity.save();
+    await appHourEntity.save();
   } catch (error) {
     logger.error(` APP HOUR SAVE ERROR::::::  ${error}`);
     throw error;

@@ -10,6 +10,7 @@ import { BlobData, TransactionData } from "../types/models";
 import { handleNewPriceMinute } from "./pricefeed/savePrices";
 import { handleAccount } from "./entities/accountData";
 import { handleApp } from "./entities/appData";
+import { handleCollective } from "./entities/collectiveData";
 /*
 export async function handleBlock(block: CosmosBlock): Promise<void> {
   // If you want to index each block in Cosmos (CosmosHub), you could do that here
@@ -72,6 +73,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
       await store.bulkUpdate("BlobData", blobs);
     }
     await handleAccount(decodedTx, priceData!, block, 0);
+    await handleCollective(decodedTx, priceData!, block, 0);
     // logger.info(`Bytes ::  ${decodedTx?.totalBytes}`);
     // logger.info(`nNamespaces ::  ${decodedTx.namespaces?.length}`);
     // logger.info(`nEvents ::   ${decodedTx.decodedEvents?.length}`);

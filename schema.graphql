@@ -156,7 +156,7 @@ type AccountDayData @entity {
   avgNativePrice: Float
   prevDayData: AccountDayData
   account: AccountEntity! @index
-  # collectiveDayData: CollectiveDayData
+  collectiveDayData: CollectiveDayData
 }
 type AccountHourData @entity {
   id: ID!
@@ -184,7 +184,7 @@ type AccountHourData @entity {
 
   prevHourData: AccountHourData
   account: AccountEntity! @index
-  # collectiveHourData: CollectiveHourData
+  collectiveHourData: CollectiveHourData
 }
 type AppEntity @entity {
   id: ID!
@@ -207,8 +207,8 @@ type AppEntity @entity {
   lastPriceFeed: PriceFeedMinute
   timestampLast: Date! @index
   avgNativePrice: Float
-  # appDayData: [AppDayData] @derivedFrom(field: "app")
-  # appHourData: [AppHourData] @derivedFrom(field: "app")
+  appDayData: [AppDayData] @derivedFrom(field: "app")
+  appHourData: [AppHourData] @derivedFrom(field: "app")
   startBlock: Float
   endBlock: Float
   name: String!
@@ -240,7 +240,8 @@ type AppDayData @entity {
   avgNativePrice: Float
   prevDayData: AppDayData
   lastUpdatedTxnId: String!
-  # collectiveDayData: CollectiveDayData
+  collectiveDayData: CollectiveDayData
+  collectiveHourData: CollectiveHourData
 }
 type AppHourData @entity {
   id: ID!
@@ -266,6 +267,92 @@ type AppHourData @entity {
   endBlock: Float
   avgNativePrice: Float
   prevHourData: AppHourData
-  # collectiveDayData: CollectiveDayData
+  collectiveDayData: CollectiveDayData
   lastUpdatedTxnId: String!
+  collectiveHourData: CollectiveHourData
+}
+
+type CollectiveData @entity {
+  id: ID!
+  totalByteSize: Float! @index
+  totalFees: Float
+  totalDAFees: Float
+  totalDAFeesUSD: Float
+  totalFeesUSD: Float
+  totalFeesNative: Float
+  totalDataSubmissionCount: Float
+  totalTransferCount: Float
+  totalTxnCount: Float
+  totalBlocksCount: Float
+  totalDataBlocksCount: Float
+  totalDataAccountsCount: Float
+  lastPriceFeed: PriceFeedMinute
+  timestampLast: Date! @index
+  avgNativePrice: Float
+
+  endBlock: Float
+  collectiveDayData: [CollectiveDayData] @derivedFrom(field: "collectiveData")
+  collectiveHourData: [CollectiveHourData] @derivedFrom(field: "collectiveData")
+  lastUpdatedTxnId: String!
+
+}
+type CollectiveDayData @entity {
+  id: ID!
+  totalByteSize: Float! @index
+  totalFees: Float
+  totalDAFees: Float
+  totalDAFeesUSD: Float
+  totalFeesUSD: Float
+  totalFeesNative: Float
+  totalDataSubmissionCount: Float
+  totalTransferCount: Float
+  totalTxnCount: Float
+  totalBlocksCount: Float
+  totalDataBlocksCount: Float
+  totalDataAccountsCount: Float
+  lastPriceFeed: PriceFeedMinute
+  timestampLast: Date! @index
+  timestampStart: Date! @index
+  startBlock: Float
+  endBlock: Float
+  avgNativePrice: Float
+
+  prevDayData: CollectiveDayData
+  appDayDataParticipant: [AppDayData] @derivedFrom(field: "collectiveDayData")
+  accountDayDataParticipant: [AccountDayData]
+    @derivedFrom(field: "collectiveDayData")
+
+  collectiveData: CollectiveData
+  lastUpdatedTxnId: String!
+
+}
+type CollectiveHourData @entity {
+  id: ID!
+  totalByteSize: Float! @index
+  totalFees: Float
+  totalDAFees: Float
+  totalDAFeesUSD: Float
+  totalFeesUSD: Float
+  totalFeesNative: Float
+  totalDataSubmissionCount: Float
+  totalTransferCount: Float
+  totalTxnCount: Float
+  totalBlocksCount: Float
+  totalDataBlocksCount: Float
+  totalDataAccountsCount: Float
+  lastPriceFeed: PriceFeedMinute
+  timestampStart: Date! @index
+  timestampLast: Date! @index
+  startBlock: Float
+  endBlock: Float
+  avgNativePrice: Float
+
+  prevHourData: CollectiveHourData
+  appHourDataParticipant: [AppHourData]
+    @derivedFrom(field: "collectiveHourData")
+  accountHourDataParticipant: [AccountHourData]
+    @derivedFrom(field: "collectiveHourData")
+  collectiveData: CollectiveData
+  lastUpdatedTxnId: String!
+
 }
