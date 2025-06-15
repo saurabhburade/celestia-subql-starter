@@ -18,7 +18,11 @@ import {
   handleAppDayData,
   handleAppHourData,
 } from "./entities/appData";
-import { handleCollective } from "./entities/collectiveData";
+import {
+  handleCollective,
+  handleCollectiveDayData,
+  handleCollectiveHourData,
+} from "./entities/collectiveData";
 /*
 export async function handleBlock(block: CosmosBlock): Promise<void> {
   // If you want to index each block in Cosmos (CosmosHub), you could do that here
@@ -56,15 +60,43 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
   const appEntities = [];
   const appDayDatas = [];
   const appHourDatas = [];
+
   const accountEntities = [];
   const accountDayDatas = [];
   const accountHourDatas = [];
+
+  const collectiveDataEntities = [];
+  const collectiveDayDatas = [];
+  const collectiveHourDatas = [];
   logger.info(`BEFORE HANDLE TRANSACTIONS LOOP`);
   for (let idx = 0; idx < txs.length; idx++) {
     const tx = txs[idx];
 
     const decodedTx = getDecodedTxData(tx, idx);
-    await handleCollective(decodedTx, priceData!, block, 0);
+    const collectiveData = await handleCollective(
+      decodedTx,
+      priceData!,
+      block,
+      0
+    );
+    const collectiveDayData = await handleCollectiveDayData(
+      decodedTx,
+      priceData!,
+      block,
+      0,
+      collectiveData
+    );
+    const collectiveHourData = await handleCollectiveHourData(
+      decodedTx,
+      priceData!,
+      block,
+      0,
+      collectiveData
+    );
+
+    collectiveDataEntities.push(collectiveData);
+    collectiveDayDatas.push(collectiveDayData);
+    collectiveHourDatas.push(collectiveHourData);
 
     const transactionRecord = TransactionData.create({
       id: `${height}-${idx}`,
@@ -197,6 +229,10 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
 
   logger.info(`BEFORE BULK UPDATES`);
 
+  logger.info(`BEFORE BULK UPDATES :: COLLECTIVE`);
+  await store.bulkUpdate("CollectiveData", collectiveDataEntities);
+  await store.bulkUpdate("CollectiveDayData", collectiveDayDatas);
+  await store.bulkUpdate("CollectiveHourData", collectiveHourDatas);
   logger.info(`BEFORE BULK UPDATES :: APPS`);
   await store.bulkUpdate("AppEntity", appEntities);
   await store.bulkUpdate("AppDayData", appDayDatas);

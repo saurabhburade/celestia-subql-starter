@@ -93,22 +93,8 @@ export async function handleCollective(
     //   `COLLECTIVE SAVE::::::  ${JSON.stringify(collectiveEntity.id)}`
     // );
 
-    // return collectiveEntity;
-    await collectiveEntity.save();
-    await handleCollectiveDayData(
-      decodedTxn,
-      priceFeed,
-      block,
-      type,
-      collectiveEntity
-    );
-    await handleCollectiveHourData(
-      decodedTxn,
-      priceFeed,
-      block,
-      type,
-      collectiveEntity
-    );
+    return collectiveEntity;
+    // await collectiveEntity.save();
   } catch (error) {
     logger.error(` COLLECTIVE SAVE ERROR::::::  ${error}`);
     throw error;
@@ -212,8 +198,8 @@ export async function handleCollectiveDayData(
     //   `COLLECTIVE DAY SAVE::::::  ${JSON.stringify(collectiveDayEntity.id)}`
     // );
 
-    // return collectiveEntity;
-    await collectiveDayEntity.save();
+    return collectiveDayEntity;
+    // await collectiveDayEntity.save();
   } catch (error) {
     logger.error(` COLLECTIVE DAY SAVE ERROR::::::  ${error}`);
     throw error;
@@ -320,8 +306,8 @@ export async function handleCollectiveHourData(
     //   `COLLECTIVE HOUR SAVE::::::  ${JSON.stringify(collectiveHourEntity.id)}`
     // );
 
-    // return collectiveEntity;
-    await collectiveHourEntity.save();
+    return collectiveHourEntity;
+    // await collectiveHourEntity.save();
   } catch (error) {
     logger.error(` COLLECTIVE HOUR SAVE ERROR::::::  ${error}`);
     throw error;
