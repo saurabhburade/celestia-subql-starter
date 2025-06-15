@@ -97,9 +97,8 @@ export async function handleAccount(
       // await accountEntity.save();
     }
     // return accountEntity;
-    await accountEntity.save();
-    await handleAccountDayData(decodedTxn, priceFeed, block, type, appRecord);
-    await handleAccountHourData(decodedTxn, priceFeed, block, type, appRecord);
+    // await accountEntity.save();
+    return accountEntity;
   } catch (error) {
     logger.error(`New ACCOUNT SAVE ERROR::::::  ${error}`);
     throw error;
@@ -206,8 +205,8 @@ export async function handleAccountDayData(
   // if (type === 1) {
   //   await accountDayDataRecord.save();
   // }
-  // return accountDayDataRecord;
-  await accountDayDataRecord.save();
+  return accountDayDataRecord;
+  // await accountDayDataRecord.save();
 }
 export async function handleAccountHourData(
   decodedTxn: TxStats,
@@ -311,6 +310,6 @@ export async function handleAccountHourData(
   // if (type === 1) {
   //   await accountDayDataRecord.save();
   // }
-  // return accountDayDataRecord;
-  await accountHourDataRecord.save();
+  return accountHourDataRecord;
+  // await accountHourDataRecord.save();
 }

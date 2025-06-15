@@ -95,18 +95,8 @@ export async function handleApp(
     // logger.info(`APP SAVE::::::  ${JSON.stringify(appEntity.id)}`);
 
     // return appEntity;
-    await appEntity.save();
-    await handleAccount(decodedTxn, priceFeed!, block, 1, appEntity);
-
-    await handleAppDayData(decodedTxn, priceFeed, block, type, appEntity, blob);
-    await handleAppHourData(
-      decodedTxn,
-      priceFeed,
-      block,
-      type,
-      appEntity,
-      blob
-    );
+    // await appEntity.save();
+    return appEntity;
   } catch (error) {
     logger.error(` APP SAVE ERROR::::::  ${error}`);
     throw error;
@@ -207,7 +197,8 @@ export async function handleAppDayData(
     // logger.info(`APP DAY SAVE::::::  ${JSON.stringify(appDayEntity.id)}`);
 
     // return appEntity;
-    await appDayEntity.save();
+    // await appDayEntity.save();
+    return appDayEntity;
   } catch (error) {
     logger.error(` APP DAY SAVE ERROR::::::  ${error}`);
     throw error;
@@ -308,7 +299,8 @@ export async function handleAppHourData(
     // logger.info(`APP HOUR SAVE::::::  ${JSON.stringify(appHourEntity.id)}`);
 
     // return appEntity;
-    await appHourEntity.save();
+    // await appHourEntity.save();
+    return appHourEntity;
   } catch (error) {
     logger.error(` APP HOUR SAVE ERROR::::::  ${error}`);
     throw error;

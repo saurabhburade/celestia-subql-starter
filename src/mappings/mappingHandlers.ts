@@ -8,8 +8,16 @@ import { getDecodedTxData } from "../utils/decodeBlockTx";
 import { BlobData, BlockData, TransactionData } from "../types/models";
 
 import { handleNewPriceMinute } from "./pricefeed/savePrices";
-import { handleAccount } from "./entities/accountData";
-import { handleApp } from "./entities/appData";
+import {
+  handleAccount,
+  handleAccountDayData,
+  handleAccountHourData,
+} from "./entities/accountData";
+import {
+  handleApp,
+  handleAppDayData,
+  handleAppHourData,
+} from "./entities/appData";
 import { handleCollective } from "./entities/collectiveData";
 /*
 export async function handleBlock(block: CosmosBlock): Promise<void> {
@@ -44,7 +52,13 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
   });
   let txnRecords: TransactionData[] = [];
   const blobs: BlobData[] = [];
-  let promises = [];
+
+  const appEntities = [];
+  const appDayDatas = [];
+  const appHourDatas = [];
+  const accountEntities = [];
+  const accountDayDatas = [];
+  const accountHourDatas = [];
   logger.info(`BEFORE HANDLE TRANSACTIONS LOOP`);
   for (let idx = 0; idx < txs.length; idx++) {
     const tx = txs[idx];
@@ -97,12 +111,81 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
           size: blob.blob_size || 0,
           signer: decodedTx.signer || "",
         });
-        await handleApp(decodedTx, priceData!, block, 0, bEntity);
+        const appEntity = await handleApp(
+          decodedTx,
+          priceData!,
+          block,
+          0,
+          bEntity
+        );
+
+        // await handleAccount(decodedTx, priceData!, block, 1, appEntity);
+
+        const appDayData = await handleAppDayData(
+          decodedTx,
+          priceData!,
+          block,
+          0,
+          appEntity,
+          blob
+        );
+        const appHourData = await handleAppHourData(
+          decodedTx,
+          priceData!,
+          block,
+          0,
+          appEntity,
+          blob
+        );
+        appEntities.push(appEntity);
+        appDayDatas.push(appDayData);
+        appHourDatas.push(appHourData);
         blobs.push(bEntity);
+
+        // associated app account
+        const accountEntity = await handleAccount(
+          decodedTx,
+          priceData!,
+          block,
+          1,
+          appEntity
+        );
+        const accDayData = await handleAccountDayData(
+          decodedTx,
+          priceData!,
+          block,
+          1,
+          appEntity
+        );
+        const accHrData = await handleAccountHourData(
+          decodedTx,
+          priceData!,
+          block,
+          1,
+          appEntity
+        );
+        accountEntities.push(accountEntity);
+        accountDayDatas.push(accDayData);
+        accountHourDatas.push(accHrData);
       }
     }
-
-    promises.push(handleAccount(decodedTx, priceData!, block, 0));
+    const accountEntity = await handleAccount(decodedTx, priceData!, block, 0);
+    const accDayData = await handleAccountDayData(
+      decodedTx,
+      priceData!,
+      block,
+      0
+    );
+    const accHrData = await handleAccountHourData(
+      decodedTx,
+      priceData!,
+      block,
+      0
+    );
+    accountEntities.push(accountEntity);
+    accountDayDatas.push(accDayData);
+    accountHourDatas.push(accHrData);
+    // promises.push(handleAccount(decodedTx, priceData!, block, 0));
 
     // logger.info(`Bytes ::  ${decodedTx?.totalBytes}`);
     // logger.info(`nNamespaces ::  ${decodedTx.namespaces?.length}`);
@@ -111,8 +194,18 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
     // logger.info(`TxFee ::   ${decodedTx.txFee}`);
   }
   logger.info(`AFTER HANDLE TRANSACTIONS LOOP`);
-  await Promise.all(promises);
+
   logger.info(`BEFORE BULK UPDATES`);
+
+  logger.info(`BEFORE BULK UPDATES :: APPS`);
+  await store.bulkUpdate("AppEntity", appEntities);
+  await store.bulkUpdate("AppDayData", appDayDatas);
+  await store.bulkUpdate("AppHourData", appHourDatas);
+  logger.info(`BEFORE BULK UPDATES :: ACCOUNTS`);
+  await store.bulkUpdate("AccountEntity", accountEntities);
+  await store.bulkUpdate("AccountDayData", accountDayDatas);
+  await store.bulkUpdate("AccountHourData", accountHourDatas);
+  logger.info(`BEFORE BULK UPDATES:: BLOBS | TXNS`);
   await store.bulkUpdate("BlobData", blobs);
   await store.bulkUpdate("TransactionData", txnRecords);
   await bdata.save();
