@@ -37,10 +37,12 @@ services:
       - --batch-size=50
       - --unsafe=true 
       - --allow-schema-migration
+      - --scale-batch-size
+      - --unfinalized-blocks=false
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node:3000/ready"]
       interval: 3s
-      timeout: 5s
+      timeout: 60s
       retries: 10
 
   graphql-engine:
