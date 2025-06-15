@@ -46,7 +46,7 @@ export async function handleCollective(
       });
     }
     if (collectiveEntity.lastUpdatedTxnId !== txnId) {
-      collectiveEntity.lastUpdatedTxnId = txnId;
+      collectiveEntity.lastUpdatedTxnId = txnId!;
       collectiveEntity.totalTxnCount! += 1;
 
       const fees = Number(decodedTxn.txFee);
