@@ -71,7 +71,6 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
   logger.info(`BEFORE HANDLE TRANSACTIONS LOOP`);
   for (let idx = 0; idx < txs.length; idx++) {
     const tx = txs[idx];
-    logger.info(`BEFORE handleCollective UPDATES`);
 
     const decodedTx = getDecodedTxData(tx, idx);
     const collectiveData = await handleCollective(
@@ -98,7 +97,6 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
     collectiveDataEntities.push(collectiveData);
     collectiveDayDatas.push(collectiveDayData);
     collectiveHourDatas.push(collectiveHourData);
-    logger.info(`AFTER handleCollective UPDATES`);
 
     const transactionRecord = TransactionData.create({
       id: `${height}-${idx}`,
@@ -126,8 +124,8 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
       Number(decodedTx.txFee) * (priceData?.nativePrice || 0);
     bdata.totalTransactionCount += 1;
     bdata.totalEventsCount += decodedTx.nEvents;
-    logger.info(`BEFORE BLOB DA UPDATES`);
     if (decodedTx.blobs && decodedTx.blobs.length > 0) {
+      logger.info(`BEFORE BLOB DA UPDATES`);
       bdata.totalBlobSize += decodedTx.totalBytes;
       bdata.totalBlobTransactionCount += 1;
 
@@ -202,8 +200,8 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
         accountDayDatas.push(accDayData);
         accountHourDatas.push(accHrData);
       }
+      logger.info(`AFTER BLOB DA UPDATES`);
     }
-    logger.info(`AFTER BLOB DA UPDATES`);
 
     const accountEntity = await handleAccount(decodedTx, priceData!, block, 0);
     const accDayData = await handleAccountDayData(
