@@ -10,7 +10,7 @@ services:
     volumes:
       - .data/postgres:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -23,7 +23,7 @@ services:
     restart: unless-stopped
     environment:
       DB_USER: postgres
-      DB_PASS: postgres
+      DB_PASS: ${POSTGRES_PASSWORD}
       DB_DATABASE: postgres
       DB_HOST: postgres
       DB_PORT: 5432
@@ -50,7 +50,7 @@ services:
     restart: unless-stopped
     environment:
       DB_USER: postgres
-      DB_PASS: postgres
+      DB_PASS: ${POSTGRES_PASSWORD}
       DB_DATABASE: postgres
       DB_HOST: postgres
       DB_PORT: 5432
