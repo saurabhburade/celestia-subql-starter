@@ -34,8 +34,8 @@ services:
       - -f=/app
       - --db-schema=app
       - --workers=5
-      - --batch-size=50
-      - --unsafe=true 
+      - --batch-size=100
+      - --unsafe=true
       - --allow-schema-migration
       - --scale-batch-size
       - --unfinalized-blocks=false
@@ -59,4 +59,3 @@ services:
     command:
       - --name=app
       - --playground
-
