@@ -74,15 +74,17 @@ export async function handleNewPriceMinute({
     }
     if (minuteId < 28312800) {
       let pricesToSave: PriceFeedMinute[] = [];
-      for (let indexMinute = minuteId; indexMinute < 28312800; indexMinute++) {
+      let indexMinute = Number(minuteId);
+      while (indexMinute < 28312800) {
         const priceFeedMinuteZero = PriceFeedMinute.create({
-          id: minuteId.toString(),
+          id: indexMinute.toString(),
           nativeBlock: nativeBlock,
           nativePrice: 2.4,
           date: blockDate,
           nativeDate: blockDate,
         });
         pricesToSave.push(priceFeedMinuteZero);
+        indexMinute = Number(indexMinute) + 1;
       }
 
       await store.bulkUpdate("PriceFeedMinute", pricesToSave);
