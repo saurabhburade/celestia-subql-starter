@@ -58,18 +58,7 @@ export async function handleNewPriceMinute({
   let ethBlockContext = {};
   // SKIP PRICES BEFORE GENESIS MINUTEID 28312800
   const nativeBlock = block.block.header.height;
-  if (minuteId < 28312800) {
-    const priceFeedMinuteZero = PriceFeedMinute.create({
-      id: minuteId.toString(),
-      nativeBlock: nativeBlock,
-      nativePrice: 2.4,
-      date: blockDate,
-      nativeDate: blockDate,
-    });
-    await priceFeedMinuteZero.save();
-    // logger.info(`PRICE BEFORE GENESIS :: minuteId: ${minuteId}`);
-    return priceFeedMinuteZero!;
-  }
+
   try {
     const existingPrice = await PriceFeedMinute.get(minuteId.toString());
     if (
@@ -82,6 +71,23 @@ export async function handleNewPriceMinute({
       //   )}`
       // );
       return existingPrice!;
+    }
+    if (minuteId < 28312800) {
+      let pricesToSave: PriceFeedMinute[] = [];
+      for (let indexMinute = minuteId; indexMinute < 28312800; indexMinute++) {
+        const priceFeedMinuteZero = PriceFeedMinute.create({
+          id: minuteId.toString(),
+          nativeBlock: nativeBlock,
+          nativePrice: 2.4,
+          date: blockDate,
+          nativeDate: blockDate,
+        });
+        pricesToSave.push(priceFeedMinuteZero);
+      }
+
+      await store.bulkUpdate("PriceFeedMinute", pricesToSave);
+      logger.info(`BULK PRICE SAVE BEFORE GENESIS :: minuteId: ${minuteId}`);
+      return pricesToSave[0]!;
     }
     let priceFeedThisMinute;
     if (minuteId <= 29147512) {
