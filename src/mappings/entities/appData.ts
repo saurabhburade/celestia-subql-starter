@@ -23,7 +23,7 @@ export async function handleApp(
   try {
     let dataSubmissionSize = decodedTxn.totalBytes ? decodedTxn?.totalBytes : 0;
 
-    const id = blob.namespaceId!;
+    const id = blob.namespaceID!;
 
     let appEntity = await AppEntity.get(id);
 
