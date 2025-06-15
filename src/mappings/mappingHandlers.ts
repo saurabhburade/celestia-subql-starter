@@ -42,10 +42,14 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
     totalTransactionCount: block.txs.length,
     timestamp: block.header.time.getTime(),
   });
+  let txnRecords: TransactionData[] = [];
+  const blobs: BlobData[] = [];
+
   for (let idx = 0; idx < txs.length; idx++) {
     const tx = txs[idx];
 
     const decodedTx = getDecodedTxData(tx, idx);
+    await handleCollective(decodedTx, priceData!, block, 0);
 
     const transactionRecord = TransactionData.create({
       id: `${height}-${idx}`,
@@ -66,7 +70,8 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
       // blockHeight: BigInt(block.block.header.height),
       timestamp: block.block.header.time.getTime(),
     });
-    await transactionRecord.save();
+    txnRecords.push(transactionRecord);
+
     bdata.totalBlockFeeNatve += decodedTx.txFee;
     bdata.totalBlockFeeUSD +=
       Number(decodedTx.txFee) * (priceData?.nativePrice || 0);
@@ -77,7 +82,6 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
       bdata.totalBlobSize += decodedTx.totalBytes;
       bdata.totalBlobTransactionCount += 1;
 
-      const blobs: BlobData[] = [];
       for (let idx2 = 0; idx2 < decodedTx.blobs.length; idx2++) {
         const blob = decodedTx.blobs[idx2];
         const bEntity = BlobData.create({
@@ -95,18 +99,17 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
         await handleApp(decodedTx, priceData!, block, 0, bEntity);
         blobs.push(bEntity);
       }
-
-      await store.bulkUpdate("BlobData", blobs);
     }
 
     await handleAccount(decodedTx, priceData!, block, 0);
-    await handleCollective(decodedTx, priceData!, block, 0);
     // logger.info(`Bytes ::  ${decodedTx?.totalBytes}`);
     // logger.info(`nNamespaces ::  ${decodedTx.namespaces?.length}`);
     // logger.info(`nEvents ::   ${decodedTx.decodedEvents?.length}`);
     // logger.info(`nMsg ::   ${decodedTx.nMessages}`);
     // logger.info(`TxFee ::   ${decodedTx.txFee}`);
   }
+  await store.bulkUpdate("BlobData", blobs);
+  await store.bulkUpdate("TransactionData", txnRecords);
   await bdata.save();
 }
 /*
