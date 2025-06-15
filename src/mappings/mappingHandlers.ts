@@ -44,7 +44,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
   });
   let txnRecords: TransactionData[] = [];
   const blobs: BlobData[] = [];
-
+  logger.info(`BEFORE HANDLE TRANSACTIONS LOOP`);
   for (let idx = 0; idx < txs.length; idx++) {
     const tx = txs[idx];
 
@@ -102,15 +102,20 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
     }
 
     await handleAccount(decodedTx, priceData!, block, 0);
+
     // logger.info(`Bytes ::  ${decodedTx?.totalBytes}`);
     // logger.info(`nNamespaces ::  ${decodedTx.namespaces?.length}`);
     // logger.info(`nEvents ::   ${decodedTx.decodedEvents?.length}`);
     // logger.info(`nMsg ::   ${decodedTx.nMessages}`);
     // logger.info(`TxFee ::   ${decodedTx.txFee}`);
   }
+  logger.info(`AFTER HANDLE TRANSACTIONS LOOP`);
+
+  logger.info(`BEFORE BULK UPDATES`);
   await store.bulkUpdate("BlobData", blobs);
   await store.bulkUpdate("TransactionData", txnRecords);
   await bdata.save();
+  logger.info(`AFTER BULK UPDATES`);
 }
 /*
 export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
