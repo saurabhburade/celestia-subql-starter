@@ -159,7 +159,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
           block,
           0,
           appEntity,
-          blob
+          bEntity
         );
         const appHourData = await handleAppHourData(
           decodedTx,
@@ -167,7 +167,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
           block,
           0,
           appEntity,
-          blob
+          bEntity
         );
         appEntities.push(appEntity);
         appDayDatas.push(appDayData);
