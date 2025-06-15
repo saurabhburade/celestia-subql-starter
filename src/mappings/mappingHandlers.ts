@@ -239,28 +239,29 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
     store.bulkUpdate("CollectiveData", collectiveDataEntities),
     store.bulkUpdate("CollectiveDayData", collectiveDayDatas),
     store.bulkUpdate("CollectiveHourData", collectiveHourDatas),
-    store.bulkUpdate("AppEntity", appEntities),
-    store.bulkUpdate("AppDayData", appDayDatas),
-    store.bulkUpdate("AppHourData", appHourDatas),
-    store.bulkUpdate("AccountEntity", accountEntities),
-    store.bulkUpdate("AccountDayData", accountDayDatas),
-    store.bulkUpdate("AccountHourData", accountHourDatas),
-    store.bulkUpdate("BlobData", blobs),
-    store.bulkUpdate("TransactionData", txnRecords),
+    // store.bulkUpdate("AppEntity", appEntities),
+    // store.bulkUpdate("AppDayData", appDayDatas),
+    // store.bulkUpdate("AppHourData", appHourDatas),
+
+    // store.bulkUpdate("AccountEntity", accountEntities),
+    // store.bulkUpdate("AccountDayData", accountDayDatas),
+    // store.bulkUpdate("AccountHourData", accountHourDatas),
+    // store.bulkUpdate("BlobData", blobs),
+    // store.bulkUpdate("TransactionData", txnRecords),
     bdata.save(),
   ]);
 
-  // logger.info(`BEFORE BULK UPDATES :: APPS`);
-  // await store.bulkUpdate("AppEntity", appEntities);
-  // await store.bulkUpdate("AppDayData", appDayDatas);
-  // await store.bulkUpdate("AppHourData", appHourDatas);
-  // logger.info(`BEFORE BULK UPDATES :: ACCOUNTS`);
-  // await store.bulkUpdate("AccountEntity", accountEntities);
-  // await store.bulkUpdate("AccountDayData", accountDayDatas);
-  // await store.bulkUpdate("AccountHourData", accountHourDatas);
+  logger.info(`BEFORE BULK UPDATES :: APPS`);
+  await store.bulkUpdate("AppEntity", appEntities);
+  await store.bulkUpdate("AppDayData", appDayDatas);
+  await store.bulkUpdate("AppHourData", appHourDatas);
+  logger.info(`BEFORE BULK UPDATES :: ACCOUNTS`);
+  await store.bulkUpdate("AccountEntity", accountEntities);
+  await store.bulkUpdate("AccountDayData", accountDayDatas);
+  await store.bulkUpdate("AccountHourData", accountHourDatas);
   // logger.info(`BEFORE BULK UPDATES:: BLOBS | TXNS`);
-  // await store.bulkUpdate("BlobData", blobs);
-  // await store.bulkUpdate("TransactionData", txnRecords);
+  await store.bulkUpdate("BlobData", blobs);
+  await store.bulkUpdate("TransactionData", txnRecords);
   // await bdata.save();
   logger.info(`AFTER BULK UPDATES`);
 }
