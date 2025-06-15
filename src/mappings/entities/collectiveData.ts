@@ -1,18 +1,14 @@
 "use strict";
 
-import { SubstrateExtrinsic } from "@subql/types";
 import {
-  AccountEntity,
-  BlobData,
   CollectiveData,
   CollectiveDayData,
   CollectiveHourData,
   PriceFeedMinute,
 } from "../../types";
 
-import { CosmosBlock, TxData } from "@subql/types-cosmos";
-import { getDecodedTxData, TxStats } from "../../utils/decodeBlockTx";
-import { sha256 } from "@cosmjs/crypto";
+import { CosmosBlock } from "@subql/types-cosmos";
+import { TxStats } from "../../utils/decodeBlockTx";
 
 export async function handleCollective(
   decodedTxn: TxStats,
