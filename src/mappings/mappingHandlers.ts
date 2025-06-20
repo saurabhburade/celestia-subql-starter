@@ -133,7 +133,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
     bdata.totalTransactionCount += 1;
     bdata.totalEventsCount += decodedTx.nEvents;
     if (decodedTx.blobs && decodedTx.blobs.length > 0) {
-      logger.info(`BEFORE BLOB DA UPDATES`);
+      // logger.info(`BEFORE BLOB DA UPDATES`);
       bdata.totalBlobSize += decodedTx.totalBytes;
       bdata.totalBlobTransactionCount += 1;
 
@@ -267,11 +267,11 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
     // logger.info(`nMsg ::   ${decodedTx.nMessages}`);
     // logger.info(`TxFee ::   ${decodedTx.txFee}`);
   }
-  logger.info(`AFTER HANDLE TRANSACTIONS LOOP`);
+  // logger.info(`AFTER HANDLE TRANSACTIONS LOOP`);
 
-  logger.info(`BEFORE BULK UPDATES`);
+  // logger.info(`BEFORE BULK UPDATES`);
 
-  logger.info(`BEFORE BULK UPDATES :: COLLECTIVE`);
+  // logger.info(`BEFORE BULK UPDATES :: COLLECTIVE`);
   // await store.bulkUpdate("CollectiveData", collectiveDataEntities);
   // await store.bulkUpdate("CollectiveDayData", collectiveDayDatas);
   // await store.bulkUpdate("CollectiveHourData", collectiveHourDatas);
@@ -302,5 +302,5 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
   // await store.bulkUpdate("BlobData", blobs);
   // await store.bulkUpdate("TransactionData", txnRecords);
   // await bdata.save();
-  logger.info(`AFTER BULK UPDATES`);
+  // logger.info(`AFTER BULK UPDATES`);
 }
