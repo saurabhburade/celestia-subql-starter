@@ -272,23 +272,23 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
   logger.info(`BEFORE BULK UPDATES`);
 
   logger.info(`BEFORE BULK UPDATES :: COLLECTIVE`);
-  // await store.bulkUpdate("CollectiveData", collectiveDataEntities);
-  // await store.bulkUpdate("CollectiveDayData", collectiveDayDatas);
-  // await store.bulkUpdate("CollectiveHourData", collectiveHourDatas);
-  await Promise.all([
-    // store.bulkUpdate("CollectiveData", collectiveDataEntities),
-    // store.bulkUpdate("CollectiveDayData", collectiveDayDatas),
-    // store.bulkUpdate("CollectiveHourData", collectiveHourDatas),
-    // store.bulkUpdate("AppEntity", appEntities),
-    // store.bulkUpdate("AppDayData", appDayDatas),
-    // store.bulkUpdate("AppHourData", appHourDatas),
-    // store.bulkUpdate("AccountEntity", accountEntities),
-    // store.bulkUpdate("AccountDayData", accountDayDatas),
-    // store.bulkUpdate("AccountHourData", accountHourDatas),
-    store.bulkUpdate("BlobData", blobs),
-    store.bulkUpdate("TransactionData", txnRecords),
-    bdata.save(),
-  ]);
+  await store.bulkUpdate("CollectiveData", collectiveDataEntities);
+  await store.bulkUpdate("CollectiveDayData", collectiveDayDatas);
+  await store.bulkUpdate("CollectiveHourData", collectiveHourDatas);
+  // await Promise.all([
+  //   // store.bulkUpdate("CollectiveData", collectiveDataEntities),
+  //   // store.bulkUpdate("CollectiveDayData", collectiveDayDatas),
+  //   // store.bulkUpdate("CollectiveHourData", collectiveHourDatas),
+  //   // store.bulkUpdate("AppEntity", appEntities),
+  //   // store.bulkUpdate("AppDayData", appDayDatas),
+  //   // store.bulkUpdate("AppHourData", appHourDatas),
+  //   // store.bulkUpdate("AccountEntity", accountEntities),
+  //   // store.bulkUpdate("AccountDayData", accountDayDatas),
+  //   // store.bulkUpdate("AccountHourData", accountHourDatas),
+  //   // store.bulkUpdate("BlobData", blobs),
+  //   // store.bulkUpdate("TransactionData", txnRecords),
+  //   // bdata.save(),
+  // ]);
 
   logger.info(`BEFORE BULK UPDATES :: APPS`);
   await store.bulkUpdate("AppEntity", appEntities);
@@ -298,9 +298,9 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
   await store.bulkUpdate("AccountEntity", accountEntities);
   await store.bulkUpdate("AccountDayData", accountDayDatas);
   await store.bulkUpdate("AccountHourData", accountHourDatas);
-  // logger.info(`BEFORE BULK UPDATES:: BLOBS | TXNS`);
-  // await store.bulkUpdate("BlobData", blobs);
-  // await store.bulkUpdate("TransactionData", txnRecords);
-  // await bdata.save();
+  logger.info(`BEFORE BULK UPDATES:: BLOBS | TXNS`);
+  await store.bulkUpdate("BlobData", blobs);
+  await store.bulkUpdate("TransactionData", txnRecords);
+  await bdata.save();
   logger.info(`AFTER BULK UPDATES`);
 }
