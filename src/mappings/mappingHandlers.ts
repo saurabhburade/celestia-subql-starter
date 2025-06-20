@@ -71,7 +71,6 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
   logger.info(`BEFORE HANDLE TRANSACTIONS LOOP`);
   for (let idx = 0; idx < txs.length; idx++) {
     const tx = txs[idx];
-
     const decodedTx = getDecodedTxData(tx, idx);
     const collectiveData = await handleCollective(
       decodedTx,
@@ -264,72 +263,3 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
   // await bdata.save();
   logger.info(`AFTER BULK UPDATES`);
 }
-/*
-export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
-  // If you want to index each transaction in Cosmos (CosmosHub), you could do that here
-  const transactionRecord = Transaction.create({
-    id: tx.hash,
-    blockHeight: BigInt(tx.block.block.header.height),
-    timestamp: tx.block.block.header.time,
-  });
-  await transactionRecord.save();
-}
-*/
-
-export async function handleEvent(event: CosmosEvent): Promise<void> {
-  // logger.info(`Found event for ${event.event.type}`);
-  // if (event.event.type === "celestia.blob.v1.EventPayForBlobs") {
-  //   logger.info(` ${event.event.type}:: BLOBS `);
-  //   // await setTimeout(() => {}, 10000);
-  //   event.event.attributes.forEach((attr) => {
-  //     const baseDecoded = Buffer.from(attr.value.toString(), "base64").toString(
-  //       "utf-8"
-  //     );
-  //     const baseDecodedKey = Buffer.from(
-  //       attr.key.toString(),
-  //       "base64"
-  //     ).toString("utf-8");
-  //     if (baseDecodedKey === "celestia.blob.v1.EventPayForBlobs") {
-  //       logger.info(
-  //         ` ${event.event.type}::  ATTR MSG ${baseDecodedKey} ::: ${baseDecodedKey} `
-  //       );
-  //     }
-  //   });
-  // }
-  // Handle Blob Event
-}
-export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
-  tx.decodedTx.body.messages.forEach((msg) => {
-    const base = Buffer.from(msg.value).toString("utf-8");
-
-    // logger.info(`TXN MSG ${msg.typeUrl} ::: ${msg}`);
-  });
-}
-
-export async function handleMessage(msg: CosmosMessage): Promise<void> {
-  logger.info(`Found message for ${msg.msg.typeUrl} ${msg.msg.decodedMsg}`);
-  // tx.decodedTx.body.messages.forEach((msg) => {
-  //   const base = Buffer.from(msg.value).toString("utf-8");
-  //   logger.info(`TXN MSG ${msg.typeUrl} ::: ${base}`);
-  // });
-}
-//   newTransfers.blockHeight = BigInt(event.block.block.header.height);
-//   newTransfers.txHash = event.tx.hash;
-//   newTransfers.fromAddress = event.msg.msg.decodedMsg.fromAddress;
-//   newTransfers.toAddress = event.msg.msg.decodedMsg.toAddress;
-//   newTransfers.amount = event.msg.msg.decodedMsg.amount;
-//   newTransfers.denomination = event.msg.msg.decodedMsg.denomination;
-
-//   await newTransfers.save();
-// }
-// // export async function handleBlock(block: any): Promise<void> {
-// //   logger.info(`Found Block at ${block.block.header.height.toString()}`);
-// //   // const txns = block.txs;
-// //   // txns.forEach((tx) => {
-// //   //   logger.info(`TX DATA ${tx.log?.toString()}`);
-// //   // });
-// // }
-// export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
-//   logger.info(`TX DATA ${tx?.decodedTx?.body?.messages?.length}`);
-//   logger.info(`BLOCK ::  ${tx?.block?.block?.header?.height}`);
-// }
