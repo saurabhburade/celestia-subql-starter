@@ -36,7 +36,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
   const blockHash = block.blockId.hash;
   const priceData = await handleNewPriceMinute({ block });
 
-  logger.info(`PRICE DATA FOUND ::  ${JSON.stringify(priceData?.nativePrice)}`);
+  logger.info(`PRICE DATA FOUND ::  ${priceData?.nativePrice}`);
   logger.info(`BLOCK ::  ${height}`);
   let bdata = BlockData.create({
     id: height.toString(),
@@ -68,7 +68,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
   const collectiveDataEntities = [];
   const collectiveDayDatas = [];
   const collectiveHourDatas = [];
-  logger.info(`BEFORE HANDLE TRANSACTIONS LOOP`);
+  // logger.info(`BEFORE HANDLE TRANSACTIONS LOOP`);
   for (let idx = 0; idx < txs.length; idx++) {
     const tx = txs[idx];
     const decodedTx = getDecodedTxData(tx, idx);
