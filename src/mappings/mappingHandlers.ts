@@ -143,7 +143,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
           id: `${height}-${idx}-${idx2}`,
           data: "",
           namespaceID: blob.namespace || "",
-          namespaceId: blob.namespace || "",
+          // namespaceId: blob.namespace || "",
           transactionId: transactionRecord.id || "",
           namespaceVersion: blob.shareVersion || 0,
           shareVersion: blob.shareVersion || 0,

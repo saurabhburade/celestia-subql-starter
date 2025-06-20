@@ -48,7 +48,7 @@ type BlockData @entity {
 type BlobData @entity {
   id: ID!
   namespaceID: String
-  namespace: AppEntity
+  # namespace: AppEntity
   data: String
   shareVersion: String
   namespaceVersion: String
