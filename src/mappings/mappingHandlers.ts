@@ -75,20 +75,29 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
     const collectiveData = await handleCollective(
       decodedTx,
       priceData!,
-      block,
+      {
+        height: block.header.height,
+        timestamp: block.header.time.getTime(),
+      },
       0
     );
     const collectiveDayData = await handleCollectiveDayData(
       decodedTx,
       priceData!,
-      block,
+      {
+        height: block.header.height,
+        timestamp: block.header.time.getTime(),
+      },
       0,
       collectiveData
     );
     const collectiveHourData = await handleCollectiveHourData(
       decodedTx,
       priceData!,
-      block,
+      {
+        height: block.header.height,
+        timestamp: block.header.time.getTime(),
+      },
       0,
       collectiveData
     );
@@ -145,7 +154,10 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
         const appEntity = await handleApp(
           decodedTx,
           priceData!,
-          block,
+          {
+            height: block.header.height,
+            timestamp: block.header.time.getTime(),
+          },
           0,
           bEntity
         );
@@ -155,7 +167,10 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
         const appDayData = await handleAppDayData(
           decodedTx,
           priceData!,
-          block,
+          {
+            height: block.header.height,
+            timestamp: block.header.time.getTime(),
+          },
           0,
           appEntity,
           bEntity
@@ -163,7 +178,10 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
         const appHourData = await handleAppHourData(
           decodedTx,
           priceData!,
-          block,
+          {
+            height: block.header.height,
+            timestamp: block.header.time.getTime(),
+          },
           0,
           appEntity,
           bEntity
@@ -177,21 +195,30 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
         const accountEntity = await handleAccount(
           decodedTx,
           priceData!,
-          block,
+          {
+            height: block.header.height,
+            timestamp: block.header.time.getTime(),
+          },
           1,
           appEntity
         );
         const accDayData = await handleAccountDayData(
           decodedTx,
           priceData!,
-          block,
+          {
+            height: block.header.height,
+            timestamp: block.header.time.getTime(),
+          },
           1,
           appEntity
         );
         const accHrData = await handleAccountHourData(
           decodedTx,
           priceData!,
-          block,
+          {
+            height: block.header.height,
+            timestamp: block.header.time.getTime(),
+          },
           1,
           appEntity
         );
@@ -202,17 +229,31 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
       logger.info(`AFTER BLOB DA UPDATES`);
     }
 
-    const accountEntity = await handleAccount(decodedTx, priceData!, block, 0);
+    const accountEntity = await handleAccount(
+      decodedTx,
+      priceData!,
+      {
+        height: block.header.height,
+        timestamp: block.header.time.getTime(),
+      },
+      0
+    );
     const accDayData = await handleAccountDayData(
       decodedTx,
       priceData!,
-      block,
+      {
+        height: block.header.height,
+        timestamp: block.header.time.getTime(),
+      },
       0
     );
     const accHrData = await handleAccountHourData(
       decodedTx,
       priceData!,
-      block,
+      {
+        height: block.header.height,
+        timestamp: block.header.time.getTime(),
+      },
       0
     );
     accountEntities.push(accountEntity);

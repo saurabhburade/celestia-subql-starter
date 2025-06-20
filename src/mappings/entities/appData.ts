@@ -16,7 +16,7 @@ import { handleAccount } from "./accountData";
 export async function handleApp(
   decodedTxn: TxStats,
   priceFeed: PriceFeedMinute,
-  block: CosmosBlock,
+  block: { height: number; timestamp: number },
   type: number = 0,
   blob: BlobData
 ) {
@@ -33,11 +33,11 @@ export async function handleApp(
         name: Buffer.from(id, "hex").toString("ascii"),
         owner: decodedTxn.signer,
         creationRawData: JSON.stringify({ ...decodedTxn }),
-        createdAt: new Date(block.header.time.getTime()),
-        timestampCreation: new Date(block.header.time.getTime()),
-        timestampLast: new Date(block.header.time.getTime()),
+        createdAt: new Date(block.timestamp),
+        timestampCreation: new Date(block.timestamp),
+        timestampLast: new Date(block.timestamp),
         totalByteSize: 0,
-        updatedAt: new Date(block.header.time.getTime()),
+        updatedAt: new Date(block.timestamp),
         avgNativePrice: priceFeed.nativePrice,
         totalDAFees: 0,
         totalDAFeesUSD: 0,
@@ -50,8 +50,8 @@ export async function handleApp(
         totalTransferCount: 0,
         lastPriceFeedId: priceFeed.id,
         endBlock: 0,
-        startBlock: block.block.header.height,
-        creationTxnId: `${block.header.height}-${decodedTxn.index}`,
+        startBlock: block.height,
+        creationTxnId: `${block.height}-${decodedTxn.index}`,
         lastUpdatedTxnId: "",
       });
     }
@@ -76,22 +76,22 @@ export async function handleApp(
 
       appEntity.totalFeesUSD = appEntity.totalFeesUSD! + Number(feesUSD);
     }
-    appEntity.timestampLast = new Date(block.header.time.getTime());
+    appEntity.timestampLast = new Date(block.timestamp);
 
-    appEntity.updatedAt = new Date(block.header.time.getTime());
+    appEntity.updatedAt = new Date(block.timestamp);
     appEntity.avgNativePrice =
       (appEntity.avgNativePrice! + priceFeed.nativePrice) / 2;
 
-    if (appEntity.endBlock!.toString() != block.header.height.toString()) {
+    if (appEntity.endBlock!.toString() != block.height.toString()) {
       appEntity.totalDataBlocksCount = appEntity.totalDataBlocksCount! + 1;
     }
 
-    if (appEntity.endBlock!.toString() != block.header.height.toString()) {
+    if (appEntity.endBlock!.toString() != block.height.toString()) {
       appEntity.totalBlocksCount = appEntity.totalBlocksCount! + 1;
     }
 
     appEntity.lastPriceFeedId = priceFeed.id;
-    appEntity.endBlock = block.header.height;
+    appEntity.endBlock = block.height;
     // logger.info(`APP SAVE::::::  ${JSON.stringify(appEntity.id)}`);
 
     // return appEntity;
@@ -106,12 +106,13 @@ export async function handleApp(
 export async function handleAppDayData(
   decodedTxn: TxStats,
   priceFeed: PriceFeedMinute,
-  block: CosmosBlock,
+  block: { height: number; timestamp: number },
+
   type: number = 0,
   appData: AppEntity,
   blob: BlobData
 ) {
-  const blockDate = new Date(Number(block.header.time.getTime()));
+  const blockDate = new Date(Number(block.timestamp));
   const minuteId = Math.floor(blockDate.getTime() / 60000);
   const dayId = Math.floor(blockDate.getTime() / 86400000);
   const hourId = Math.floor(blockDate.getTime() / 3600000); // Divide by milliseconds in an hour
@@ -129,13 +130,13 @@ export async function handleAppDayData(
       appDayEntity = AppDayData.create({
         id: id,
         appId: appData.id,
-        timestampStart: new Date(block.header.time.getTime()),
+        timestampStart: new Date(block.timestamp),
         attachedAppId: appData.id,
         prevDayDataId: previd,
         totalDataAccountsCount: 0,
         totalFees: 0,
         type: 0,
-        timestampLast: new Date(block.header.time.getTime()),
+        timestampLast: new Date(block.timestamp),
         totalByteSize: 0,
         avgNativePrice: priceFeed.nativePrice,
         totalDAFees: 0,
@@ -149,7 +150,7 @@ export async function handleAppDayData(
         totalTransferCount: 0,
         lastPriceFeedId: priceFeed.id,
         endBlock: 0,
-        startBlock: block.block.header.height,
+        startBlock: block.height,
 
         lastUpdatedTxnId: "",
         collectiveDayDataId: dayId?.toString(),
@@ -176,22 +177,22 @@ export async function handleAppDayData(
 
       appDayEntity.totalFeesUSD = appDayEntity.totalFeesUSD! + Number(feesUSD);
     }
-    appDayEntity.timestampLast = new Date(block.header.time.getTime());
+    appDayEntity.timestampLast = new Date(block.timestamp);
 
     appDayEntity.avgNativePrice =
       (appDayEntity.avgNativePrice! + priceFeed.nativePrice) / 2;
 
-    if (appDayEntity.endBlock!.toString() != block.header.height.toString()) {
+    if (appDayEntity.endBlock!.toString() != block.height.toString()) {
       appDayEntity.totalDataBlocksCount =
         appDayEntity.totalDataBlocksCount! + 1;
     }
 
-    if (appDayEntity.endBlock!.toString() != block.header.height.toString()) {
+    if (appDayEntity.endBlock!.toString() != block.height.toString()) {
       appDayEntity.totalBlocksCount = appDayEntity.totalBlocksCount! + 1;
     }
 
     appDayEntity.lastPriceFeedId = priceFeed.id;
-    appDayEntity.endBlock = block.header.height;
+    appDayEntity.endBlock = block.height;
     appDayEntity.collectiveHourDataId = hourId?.toString();
 
     // logger.info(`APP DAY SAVE::::::  ${JSON.stringify(appDayEntity.id)}`);
@@ -207,12 +208,13 @@ export async function handleAppDayData(
 export async function handleAppHourData(
   decodedTxn: TxStats,
   priceFeed: PriceFeedMinute,
-  block: CosmosBlock,
+  block: { height: number; timestamp: number },
+
   type: number = 0,
   appData: AppEntity,
   blob: BlobData
 ) {
-  const blockDate = new Date(Number(block.header.time.getTime()));
+  const blockDate = new Date(Number(block.timestamp));
   const minuteId = Math.floor(blockDate.getTime() / 60000);
   const dayId = Math.floor(blockDate.getTime() / 86400000);
   const prevDayId = dayId - 1;
@@ -230,13 +232,13 @@ export async function handleAppHourData(
       appHourEntity = AppHourData.create({
         id: id,
         appId: appData.id,
-        timestampStart: new Date(block.header.time.getTime()),
+        timestampStart: new Date(block.timestamp),
         attachedAppId: appData.id,
         prevHourDataId: previd,
         totalDataAccountsCount: 0,
         totalFees: 0,
         type: 0,
-        timestampLast: new Date(block.header.time.getTime()),
+        timestampLast: new Date(block.timestamp),
         totalByteSize: 0,
         avgNativePrice: priceFeed.nativePrice,
         totalDAFees: 0,
@@ -250,7 +252,7 @@ export async function handleAppHourData(
         totalTransferCount: 0,
         lastPriceFeedId: priceFeed.id,
         endBlock: 0,
-        startBlock: block.block.header.height,
+        startBlock: block.height,
 
         lastUpdatedTxnId: "",
         collectiveDayDataId: dayId?.toString(),
@@ -279,22 +281,22 @@ export async function handleAppHourData(
       appHourEntity.totalFeesUSD =
         appHourEntity.totalFeesUSD! + Number(feesUSD);
     }
-    appHourEntity.timestampLast = new Date(block.header.time.getTime());
+    appHourEntity.timestampLast = new Date(block.timestamp);
 
     appHourEntity.avgNativePrice =
       (appHourEntity.avgNativePrice! + priceFeed.nativePrice) / 2;
 
-    if (appHourEntity.endBlock!.toString() != block.header.height.toString()) {
+    if (appHourEntity.endBlock!.toString() != block.height.toString()) {
       appHourEntity.totalDataBlocksCount =
         appHourEntity.totalDataBlocksCount! + 1;
     }
 
-    if (appHourEntity.endBlock!.toString() != block.header.height.toString()) {
+    if (appHourEntity.endBlock!.toString() != block.height.toString()) {
       appHourEntity.totalBlocksCount = appHourEntity.totalBlocksCount! + 1;
     }
 
     appHourEntity.lastPriceFeedId = priceFeed.id;
-    appHourEntity.endBlock = block.header.height;
+    appHourEntity.endBlock = block.height;
 
     // logger.info(`APP HOUR SAVE::::::  ${JSON.stringify(appHourEntity.id)}`);
 

@@ -13,20 +13,20 @@ import { TxStats } from "../../utils/decodeBlockTx";
 export async function handleCollective(
   decodedTxn: TxStats,
   priceFeed: PriceFeedMinute,
-  block: CosmosBlock,
+  block: { height: number; timestamp: number },
   type: number = 0
 ) {
   try {
     let dataSubmissionSize = decodedTxn.totalBytes ? decodedTxn?.totalBytes : 0;
 
     const id = "1";
-    const txnId = `${block.header.height}-${decodedTxn?.index}`;
+    const txnId = `${block.height}-${decodedTxn?.index}`;
     let collectiveEntity = await CollectiveData.get(id);
 
     if (collectiveEntity === undefined || collectiveEntity === null) {
       collectiveEntity = CollectiveData.create({
         id: id,
-        timestampLast: new Date(block.header.time.getTime()),
+        timestampLast: new Date(block.timestamp),
         totalByteSize: 0,
         avgNativePrice: priceFeed.nativePrice,
         totalDAFees: 0,
@@ -68,27 +68,23 @@ export async function handleCollective(
       collectiveEntity.totalFeesUSD =
         collectiveEntity.totalFeesUSD! + Number(feesUSD);
     }
-    collectiveEntity.timestampLast = new Date(block.header.time.getTime());
+    collectiveEntity.timestampLast = new Date(block.timestamp);
 
     collectiveEntity.avgNativePrice =
       (collectiveEntity.avgNativePrice! + priceFeed.nativePrice) / 2;
 
-    if (
-      collectiveEntity.endBlock!.toString() != block.header.height.toString()
-    ) {
+    if (collectiveEntity.endBlock!.toString() != block.height.toString()) {
       collectiveEntity.totalDataBlocksCount =
         collectiveEntity.totalDataBlocksCount! + 1;
     }
 
-    if (
-      collectiveEntity.endBlock!.toString() != block.header.height.toString()
-    ) {
+    if (collectiveEntity.endBlock!.toString() != block.height.toString()) {
       collectiveEntity.totalBlocksCount =
         collectiveEntity.totalBlocksCount! + 1;
     }
 
     collectiveEntity.lastPriceFeedId = priceFeed.id;
-    collectiveEntity.endBlock = block.header.height;
+    collectiveEntity.endBlock = block.height;
     // logger.info(
     //   `COLLECTIVE SAVE::::::  ${JSON.stringify(collectiveEntity.id)}`
     // );
@@ -104,11 +100,11 @@ export async function handleCollective(
 export async function handleCollectiveDayData(
   decodedTxn: TxStats,
   priceFeed: PriceFeedMinute,
-  block: CosmosBlock,
+  block: { height: number; timestamp: number },
   type: number = 0,
   collectiveEntity: CollectiveData
 ) {
-  const blockDate = new Date(Number(block.header.time.getTime()));
+  const blockDate = new Date(Number(block.timestamp));
   const minuteId = Math.floor(blockDate.getTime() / 60000);
   const dayId = Math.floor(blockDate.getTime() / 86400000);
   const prevDayId = dayId - 1;
@@ -117,7 +113,7 @@ export async function handleCollectiveDayData(
 
     const id = `${dayId}`;
     const previd = `${prevDayId}`;
-    const txnId = `${block.header.height}-${decodedTxn?.index}`;
+    const txnId = `${block.height}-${decodedTxn?.index}`;
 
     let collectiveDayEntity = await CollectiveDayData.get(id);
 
@@ -125,13 +121,13 @@ export async function handleCollectiveDayData(
       collectiveDayEntity = CollectiveDayData.create({
         id: id,
         collectiveDataId: collectiveEntity.id,
-        timestampStart: new Date(block.header.time.getTime()),
+        timestampStart: new Date(block.timestamp),
 
         prevDayDataId: previd,
         totalDataAccountsCount: 0,
         totalFees: 0,
 
-        timestampLast: new Date(block.header.time.getTime()),
+        timestampLast: new Date(block.timestamp),
         totalByteSize: 0,
         avgNativePrice: priceFeed.nativePrice,
         totalDAFees: 0,
@@ -145,7 +141,7 @@ export async function handleCollectiveDayData(
         totalTransferCount: 0,
         lastPriceFeedId: priceFeed.id,
         endBlock: 0,
-        startBlock: block.block.header.height,
+        startBlock: block.height,
 
         lastUpdatedTxnId: "",
       });
@@ -173,27 +169,23 @@ export async function handleCollectiveDayData(
       collectiveDayEntity.totalFeesUSD =
         collectiveDayEntity.totalFeesUSD! + Number(feesUSD);
     }
-    collectiveDayEntity.timestampLast = new Date(block.header.time.getTime());
+    collectiveDayEntity.timestampLast = new Date(block.timestamp);
 
     collectiveDayEntity.avgNativePrice =
       (collectiveDayEntity.avgNativePrice! + priceFeed.nativePrice) / 2;
 
-    if (
-      collectiveDayEntity.endBlock!.toString() != block.header.height.toString()
-    ) {
+    if (collectiveDayEntity.endBlock!.toString() != block.height.toString()) {
       collectiveDayEntity.totalDataBlocksCount =
         collectiveDayEntity.totalDataBlocksCount! + 1;
     }
 
-    if (
-      collectiveDayEntity.endBlock!.toString() != block.header.height.toString()
-    ) {
+    if (collectiveDayEntity.endBlock!.toString() != block.height.toString()) {
       collectiveDayEntity.totalBlocksCount =
         collectiveDayEntity.totalBlocksCount! + 1;
     }
 
     collectiveDayEntity.lastPriceFeedId = priceFeed.id;
-    collectiveDayEntity.endBlock = block.header.height;
+    collectiveDayEntity.endBlock = block.height;
     // logger.info(
     //   `COLLECTIVE DAY SAVE::::::  ${JSON.stringify(collectiveDayEntity.id)}`
     // );
@@ -208,11 +200,11 @@ export async function handleCollectiveDayData(
 export async function handleCollectiveHourData(
   decodedTxn: TxStats,
   priceFeed: PriceFeedMinute,
-  block: CosmosBlock,
+  block: { height: number; timestamp: number },
   type: number = 0,
   collectiveEntity: CollectiveData
 ) {
-  const blockDate = new Date(Number(block.header.time.getTime()));
+  const blockDate = new Date(Number(block.timestamp));
   const minuteId = Math.floor(blockDate.getTime() / 60000);
   const dayId = Math.floor(blockDate.getTime() / 86400000);
   const prevDayId = dayId - 1;
@@ -223,7 +215,7 @@ export async function handleCollectiveHourData(
 
     const id = `${hourId}`;
     const previd = `${prevHourId}`;
-    const txnId = `${block.header.height}-${decodedTxn?.index}`;
+    const txnId = `${block.height}-${decodedTxn?.index}`;
 
     let collectiveHourEntity = await CollectiveHourData.get(id);
 
@@ -231,13 +223,13 @@ export async function handleCollectiveHourData(
       collectiveHourEntity = CollectiveHourData.create({
         id: id,
         collectiveDataId: collectiveEntity.id,
-        timestampStart: new Date(block.header.time.getTime()),
+        timestampStart: new Date(block.timestamp),
 
         prevHourDataId: previd,
         totalDataAccountsCount: 0,
         totalFees: 0,
 
-        timestampLast: new Date(block.header.time.getTime()),
+        timestampLast: new Date(block.timestamp),
         totalByteSize: 0,
         avgNativePrice: priceFeed.nativePrice,
         totalDAFees: 0,
@@ -251,7 +243,7 @@ export async function handleCollectiveHourData(
         totalTransferCount: 0,
         lastPriceFeedId: priceFeed.id,
         endBlock: 0,
-        startBlock: block.block.header.height,
+        startBlock: block.height,
 
         lastUpdatedTxnId: "",
       });
@@ -279,29 +271,23 @@ export async function handleCollectiveHourData(
       collectiveHourEntity.totalFeesUSD =
         collectiveHourEntity.totalFeesUSD! + Number(feesUSD);
     }
-    collectiveHourEntity.timestampLast = new Date(block.header.time.getTime());
+    collectiveHourEntity.timestampLast = new Date(block.timestamp);
 
     collectiveHourEntity.avgNativePrice =
       (collectiveHourEntity.avgNativePrice! + priceFeed.nativePrice) / 2;
 
-    if (
-      collectiveHourEntity.endBlock!.toString() !=
-      block.header.height.toString()
-    ) {
+    if (collectiveHourEntity.endBlock!.toString() != block.height.toString()) {
       collectiveHourEntity.totalDataBlocksCount =
         collectiveHourEntity.totalDataBlocksCount! + 1;
     }
 
-    if (
-      collectiveHourEntity.endBlock!.toString() !=
-      block.header.height.toString()
-    ) {
+    if (collectiveHourEntity.endBlock!.toString() != block.height.toString()) {
       collectiveHourEntity.totalBlocksCount =
         collectiveHourEntity.totalBlocksCount! + 1;
     }
 
     collectiveHourEntity.lastPriceFeedId = priceFeed.id;
-    collectiveHourEntity.endBlock = block.header.height;
+    collectiveHourEntity.endBlock = block.height;
     // logger.info(
     //   `COLLECTIVE HOUR SAVE::::::  ${JSON.stringify(collectiveHourEntity.id)}`
     // );
