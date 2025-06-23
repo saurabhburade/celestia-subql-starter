@@ -36,51 +36,52 @@ const project: CosmosProject = {
      * These settings can be found in your docker-compose.yaml, they will slow indexing but prevent your project being rate limited
      */
     endpoint: [
+      "https://celestia.cumulo.org.es",
       "https://public-celestia-rpc.numia.xyz",
       // "https://celestia-rpc.mesa.newmetric.xyz",
     ],
-    // chaintypes: new Map([
-    //   [
-    //     "cosmos.slashing.v1beta1",
-    //     {
-    //       file: "./proto/cosmos/slashing/v1beta1/tx.proto",
-    //       messages: ["MsgUnjail"],
-    //     },
-    //   ],
-    //   [
-    //     "cosmos.gov.v1beta1",
-    //     {
-    //       file: "./proto/cosmos/gov/v1beta1/tx.proto",
-    //       messages: ["MsgVoteWeighted"],
-    //     },
-    //   ],
-    //   [
-    //     "cosmos.gov.v1beta1.gov",
-    //     {
-    //       file: "./proto/cosmos/gov/v1beta1/gov.proto",
-    //       messages: ["WeightedVoteOption"],
-    //     },
-    //   ],
-    // ]),
+    chaintypes: new Map([
+      [
+        "celestia.blob.v1",
+        {
+          file: "./proto/celestia/blob/v1/tx.proto",
+          messages: ["MsgPayForBlobs"],
+        },
+      ],
+      [
+        "cosmos.slashing.v1beta1",
+        {
+          file: "./proto/cosmos/slashing/v1beta1/tx.proto",
+          messages: ["MsgUnjail"],
+        },
+      ],
+      [
+        "cosmos.gov.v1beta1",
+        {
+          file: "./proto/cosmos/gov/v1beta1/tx.proto",
+          messages: ["MsgVoteWeighted"],
+        },
+      ],
+      [
+        "cosmos.gov.v1beta1.gov",
+        {
+          file: "./proto/cosmos/gov/v1beta1/gov.proto",
+          messages: ["WeightedVoteOption"],
+        },
+      ],
+    ]),
   },
   dataSources: [
     {
       kind: CosmosDatasourceKind.Runtime,
-      startBlock: 3130617,
+      startBlock: 1,
       mapping: {
         file: "./dist/index.js",
         handlers: [
           {
-            handler: "handleEvent",
-            kind: CosmosHandlerKind.Event,
-            // filter: {
-            //   type: "celestia.blob.v1.EventPayForBlobs",
-            // },
+            handler: "handleBlock",
+            kind: CosmosHandlerKind.Block,
           },
-          // {
-          //   handler: "handleBlock",
-          //   kind: CosmosHandlerKind.Block,
-          // },
           // {
           //   handler: "handleTransaction",
           //   kind: CosmosHandlerKind.Transaction,

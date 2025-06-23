@@ -4,7 +4,25 @@ import {
   CosmosMessage,
   CosmosTransaction,
 } from "@subql/types-cosmos";
+import { getDecodedTxData } from "../utils/decodeBlockTx";
+import { BlobData, BlockData, TransactionData } from "../types/models";
 
+import { handleNewPriceMinute } from "./pricefeed/savePrices";
+import {
+  handleAccount,
+  handleAccountDayData,
+  handleAccountHourData,
+} from "./entities/accountData";
+import {
+  handleApp,
+  handleAppDayData,
+  handleAppHourData,
+} from "./entities/appData";
+import {
+  handleCollective,
+  handleCollectiveDayData,
+  handleCollectiveHourData,
+} from "./entities/collectiveData";
 /*
 export async function handleBlock(block: CosmosBlock): Promise<void> {
   // If you want to index each block in Cosmos (CosmosHub), you could do that here
@@ -12,75 +30,277 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
 */
 export async function handleBlock(block: CosmosBlock): Promise<void> {
   // If you want to index each block in Cosmos (CosmosHub), you could do that here
-  // const height = block?.block?.header?.height;
-  // const txs = block.txs;
-  // if (height === 199552) {
-  //   logger.info(`BLOCK ::  ${height}`);
-  //   txs.forEach((tx) => {
-  //     logger.info(`EVENTS ::  ${JSON.stringify(tx?.events)}`);
-  //     logger.info(`LOGS ::  ${JSON.stringify(tx?.log)}`);
-  //     logger.info(`DATA ::  ${JSON.stringify(tx?.data)}`);
-  //   });
-  // }
-}
-/*
-export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
-  // If you want to index each transaction in Cosmos (CosmosHub), you could do that here
-  const transactionRecord = Transaction.create({
-    id: tx.hash,
-    blockHeight: BigInt(tx.block.block.header.height),
-    timestamp: tx.block.block.header.time,
+  const height = block?.block?.header.height;
+
+  const txs = block.txs;
+  const blockHash = block.blockId.hash;
+  const priceData = await handleNewPriceMinute({ block });
+
+  logger.info(`PRICE DATA FOUND ::  ${priceData?.nativePrice}`);
+  logger.info(`BLOCK ::  ${height}`);
+  let bdata = BlockData.create({
+    id: height.toString(),
+    avgNativePrice: priceData?.nativePrice!,
+    currentNativePrice: priceData?.nativePrice!,
+    hash: "",
+    height: height,
+    proposer: block.header.proposerAddress.toString(),
+    totalBlobSize: 0,
+    totalBlobTransactionCount: 0,
+    totalBlockFeeNatve: 0,
+    totalBlockFeeUSD: 0,
+    totalEventsCount: 0,
+    totalSquareSize: 0,
+    totalTransactionCount: block.txs.length,
+    timestamp: block.header.time.getTime(),
   });
-  await transactionRecord.save();
-}
-*/
+  let txnRecords: TransactionData[] = [];
+  const blobs: BlobData[] = [];
 
-export async function handleEvent(event: CosmosEvent): Promise<void> {
-  logger.info(`Found event for ${event.event.type}`);
-  if (event.event.type === "celestia.blob.v1.EventPayForBlobs") {
-    logger.info(` ${event.event.type}:: BLOBS `);
-    // await setTimeout(() => {}, 10000);
-    event.event.attributes.forEach((attr) => {
-      const baseDecoded = Buffer.from(attr.value.toString(), "base64").toString(
-        "utf-8"
-      );
-      const baseDecodedKey = Buffer.from(
-        attr.key.toString(),
-        "base64"
-      ).toString("utf-8");
-      if (baseDecodedKey === "celestia.blob.v1.EventPayForBlobs") {
-        logger.info(
-          ` ${event.event.type}::  ATTR MSG ${baseDecodedKey} ::: ${baseDecodedKey} `
-        );
-      }
+  const appEntities = [];
+  const appDayDatas = [];
+  const appHourDatas = [];
+
+  const accountEntities = [];
+  const accountDayDatas = [];
+  const accountHourDatas = [];
+
+  const collectiveDataEntities = [];
+  const collectiveDayDatas = [];
+  const collectiveHourDatas = [];
+  // logger.info(`BEFORE HANDLE TRANSACTIONS LOOP`);
+  for (let idx = 0; idx < txs.length; idx++) {
+    const tx = txs[idx];
+    const decodedTx = getDecodedTxData(tx, idx);
+    const collectiveData = await handleCollective(
+      decodedTx,
+      priceData!,
+      {
+        height: block.header.height,
+        timestamp: block.header.time.getTime(),
+      },
+      0
+    );
+    const collectiveDayData = await handleCollectiveDayData(
+      decodedTx,
+      priceData!,
+      {
+        height: block.header.height,
+        timestamp: block.header.time.getTime(),
+      },
+      0,
+      collectiveData
+    );
+    const collectiveHourData = await handleCollectiveHourData(
+      decodedTx,
+      priceData!,
+      {
+        height: block.header.height,
+        timestamp: block.header.time.getTime(),
+      },
+      0,
+      collectiveData
+    );
+
+    collectiveDataEntities.push(collectiveData);
+    collectiveDayDatas.push(collectiveDayData);
+    collectiveHourDatas.push(collectiveHourData);
+
+    const transactionRecord = TransactionData.create({
+      id: `${height}-${idx}`,
+      blockHeightId: height.toString(),
+
+      denomination: "tia",
+      amount: decodedTx.txFee,
+      hash: `${height}-${idx}`,
+
+      isBlobTransaction: decodedTx?.totalBytes > 0 ? true : false,
+      nDataSubs: decodedTx.nDataSubs,
+      nMessages: decodedTx.nMessages,
+
+      totalBytes: decodedTx.totalBytes,
+      nEvents: decodedTx.nEvents,
+      txFeeNative: decodedTx.txFee,
+      signerId: decodedTx.signer,
+      // blockHeight: BigInt(block.block.header.height),
+      timestamp: block.block.header.time.getTime(),
     });
+    txnRecords.push(transactionRecord);
+
+    bdata.totalBlockFeeNatve += decodedTx.txFee;
+    bdata.totalBlockFeeUSD +=
+      Number(decodedTx.txFee) * (priceData?.nativePrice || 0);
+    bdata.totalTransactionCount += 1;
+    bdata.totalEventsCount += decodedTx.nEvents;
+    if (decodedTx.blobs && decodedTx.blobs.length > 0) {
+      // logger.info(`BEFORE BLOB DA UPDATES`);
+      bdata.totalBlobSize += decodedTx.totalBytes;
+      bdata.totalBlobTransactionCount += 1;
+
+      for (let idx2 = 0; idx2 < decodedTx.blobs.length; idx2++) {
+        const blob = decodedTx.blobs[idx2];
+        const bEntity = BlobData.create({
+          id: `${height}-${idx}-${idx2}`,
+          data: "",
+          namespaceID: blob.namespace || "",
+          // namespaceId: blob.namespace || "",
+          transactionId: transactionRecord.id || "",
+          namespaceVersion: blob.shareVersion || 0,
+          shareVersion: blob.shareVersion || 0,
+          commitment: blob.commitment || "",
+          size: blob.blob_size || 0,
+          signer: decodedTx.signer || "",
+        });
+        const appEntity = await handleApp(
+          decodedTx,
+          priceData!,
+          {
+            height: block.header.height,
+            timestamp: block.header.time.getTime(),
+          },
+          0,
+          bEntity
+        );
+
+        // await handleAccount(decodedTx, priceData!, block, 1, appEntity);
+
+        const appDayData = await handleAppDayData(
+          decodedTx,
+          priceData!,
+          {
+            height: block.header.height,
+            timestamp: block.header.time.getTime(),
+          },
+          0,
+          appEntity,
+          bEntity
+        );
+        const appHourData = await handleAppHourData(
+          decodedTx,
+          priceData!,
+          {
+            height: block.header.height,
+            timestamp: block.header.time.getTime(),
+          },
+          0,
+          appEntity,
+          bEntity
+        );
+        appEntities.push(appEntity);
+        appDayDatas.push(appDayData);
+        appHourDatas.push(appHourData);
+        blobs.push(bEntity);
+
+        // associated app account
+        const accountEntity = await handleAccount(
+          decodedTx,
+          priceData!,
+          {
+            height: block.header.height,
+            timestamp: block.header.time.getTime(),
+          },
+          1,
+          appEntity
+        );
+        const accDayData = await handleAccountDayData(
+          decodedTx,
+          priceData!,
+          {
+            height: block.header.height,
+            timestamp: block.header.time.getTime(),
+          },
+          1,
+          appEntity
+        );
+        const accHrData = await handleAccountHourData(
+          decodedTx,
+          priceData!,
+          {
+            height: block.header.height,
+            timestamp: block.header.time.getTime(),
+          },
+          1,
+          appEntity
+        );
+        accountEntities.push(accountEntity);
+        accountDayDatas.push(accDayData);
+        accountHourDatas.push(accHrData);
+      }
+      logger.info(`AFTER BLOB DA UPDATES`);
+    }
+
+    const accountEntity = await handleAccount(
+      decodedTx,
+      priceData!,
+      {
+        height: block.header.height,
+        timestamp: block.header.time.getTime(),
+      },
+      0
+    );
+    const accDayData = await handleAccountDayData(
+      decodedTx,
+      priceData!,
+      {
+        height: block.header.height,
+        timestamp: block.header.time.getTime(),
+      },
+      0
+    );
+    const accHrData = await handleAccountHourData(
+      decodedTx,
+      priceData!,
+      {
+        height: block.header.height,
+        timestamp: block.header.time.getTime(),
+      },
+      0
+    );
+    accountEntities.push(accountEntity);
+    accountDayDatas.push(accDayData);
+    accountHourDatas.push(accHrData);
+    // promises.push(handleAccount(decodedTx, priceData!, block, 0));
+
+    // logger.info(`Bytes ::  ${decodedTx?.totalBytes}`);
+    // logger.info(`nNamespaces ::  ${decodedTx.namespaces?.length}`);
+    // logger.info(`nEvents ::   ${decodedTx.decodedEvents?.length}`);
+    // logger.info(`nMsg ::   ${decodedTx.nMessages}`);
+    // logger.info(`TxFee ::   ${decodedTx.txFee}`);
   }
+  // logger.info(`AFTER HANDLE TRANSACTIONS LOOP`);
 
-  // Handle Blob Event
-}
-export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
-  // tx.decodedTx.body.messages.forEach((msg) => {
-  //   const base = Buffer.from(msg.value).toString("utf-8");
-  //   logger.info(`TXN MSG ${msg.typeUrl} ::: ${base}`);
-  // });
-}
-//   newTransfers.blockHeight = BigInt(event.block.block.header.height);
-//   newTransfers.txHash = event.tx.hash;
-//   newTransfers.fromAddress = event.msg.msg.decodedMsg.fromAddress;
-//   newTransfers.toAddress = event.msg.msg.decodedMsg.toAddress;
-//   newTransfers.amount = event.msg.msg.decodedMsg.amount;
-//   newTransfers.denomination = event.msg.msg.decodedMsg.denomination;
+  // logger.info(`BEFORE BULK UPDATES`);
 
-//   await newTransfers.save();
-// }
-// // export async function handleBlock(block: any): Promise<void> {
-// //   logger.info(`Found Block at ${block.block.header.height.toString()}`);
-// //   // const txns = block.txs;
-// //   // txns.forEach((tx) => {
-// //   //   logger.info(`TX DATA ${tx.log?.toString()}`);
-// //   // });
-// // }
-// export async function handleTransaction(tx: CosmosTransaction): Promise<void> {
-//   logger.info(`TX DATA ${tx?.decodedTx?.body?.messages?.length}`);
-//   logger.info(`BLOCK ::  ${tx?.block?.block?.header?.height}`);
-// }
+  // logger.info(`BEFORE BULK UPDATES :: COLLECTIVE`);
+  // await store.bulkUpdate("CollectiveData", collectiveDataEntities);
+  // await store.bulkUpdate("CollectiveDayData", collectiveDayDatas);
+  // await store.bulkUpdate("CollectiveHourData", collectiveHourDatas);
+  await Promise.all([
+    store.bulkUpdate("CollectiveData", collectiveDataEntities),
+    store.bulkUpdate("CollectiveDayData", collectiveDayDatas),
+    store.bulkUpdate("CollectiveHourData", collectiveHourDatas),
+    store.bulkUpdate("AppEntity", appEntities),
+    store.bulkUpdate("AppDayData", appDayDatas),
+    store.bulkUpdate("AppHourData", appHourDatas),
+    store.bulkUpdate("AccountEntity", accountEntities),
+    store.bulkUpdate("AccountDayData", accountDayDatas),
+    store.bulkUpdate("AccountHourData", accountHourDatas),
+    store.bulkUpdate("BlobData", blobs),
+    store.bulkUpdate("TransactionData", txnRecords),
+    bdata.save(),
+  ]);
+
+  // logger.info(`BEFORE BULK UPDATES :: APPS`);
+  // await store.bulkUpdate("AppEntity", appEntities);
+  // await store.bulkUpdate("AppDayData", appDayDatas);
+  // await store.bulkUpdate("AppHourData", appHourDatas);
+  // logger.info(`BEFORE BULK UPDATES :: ACCOUNTS`);
+  // await store.bulkUpdate("AccountEntity", accountEntities);
+  // await store.bulkUpdate("AccountDayData", accountDayDatas);
+  // await store.bulkUpdate("AccountHourData", accountHourDatas);
+  // logger.info(`BEFORE BULK UPDATES:: BLOBS | TXNS`);
+  // await store.bulkUpdate("BlobData", blobs);
+  // await store.bulkUpdate("TransactionData", txnRecords);
+  // await bdata.save();
+  // logger.info(`AFTER BULK UPDATES`);
+}
