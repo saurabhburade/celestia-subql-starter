@@ -32,17 +32,18 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
   // If you want to index each block in Cosmos (CosmosHub), you could do that here
   const height = block?.block?.header.height;
 
-  const txs = block.txs;
+  const txs = block.transactions;
+
   const blockHash = block.blockId.hash;
   const priceData = await handleNewPriceMinute({ block });
 
-  logger.info(`PRICE DATA FOUND ::  ${priceData?.nativePrice}`);
-  logger.info(`BLOCK ::  ${height}`);
+  logger.info(`BLOCK ::  ${height} ::: PRICE :: ${priceData?.nativePrice}`);
+
   let bdata = BlockData.create({
     id: height.toString(),
     avgNativePrice: priceData?.nativePrice!,
     currentNativePrice: priceData?.nativePrice!,
-    hash: "",
+    hash: block.header.consensusHash.toString(),
     height: height,
     proposer: block.header.proposerAddress.toString(),
     totalBlobSize: 0,
@@ -107,12 +108,12 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
     collectiveHourDatas.push(collectiveHourData);
 
     const transactionRecord = TransactionData.create({
-      id: `${height}-${idx}`,
+      id: tx.hash,
       blockHeightId: height.toString(),
 
       denomination: "tia",
       amount: decodedTx.txFee,
-      hash: `${height}-${idx}`,
+      hash: tx.hash,
 
       isBlobTransaction: decodedTx?.totalBytes > 0 ? true : false,
       nDataSubs: decodedTx.nDataSubs,
@@ -124,6 +125,8 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
       signerId: decodedTx.signer,
       // blockHeight: BigInt(block.block.header.height),
       timestamp: block.block.header.time.getTime(),
+      txFeeUSD: Number(decodedTx.txFee) * (priceData?.nativePrice || 0),
+      lastPriceFeedId: priceData!.id,
     });
     txnRecords.push(transactionRecord);
 
@@ -226,7 +229,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
         accountDayDatas.push(accDayData);
         accountHourDatas.push(accHrData);
       }
-      logger.info(`AFTER BLOB DA UPDATES`);
+      // logger.info(`AFTER BLOB DA UPDATES`);
     }
 
     const accountEntity = await handleAccount(

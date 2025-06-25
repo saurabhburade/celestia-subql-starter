@@ -51,7 +51,7 @@ export async function handleApp(
         lastPriceFeedId: priceFeed.id,
         endBlock: 0,
         startBlock: block.height,
-        creationTxnId: `${block.height}-${decodedTxn.index}`,
+        creationTxnId: decodedTxn.hash,
         lastUpdatedTxnId: "",
       });
     }

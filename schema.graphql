@@ -68,8 +68,10 @@ type TransactionData @entity {
 
   amount: Float!
   denomination: String!
+  lastPriceFeed: PriceFeedMinute
 
   txFeeNative: Float!
+  txFeeUSD: Float!
   nMessages: Float!
   nEvents: Float!
   nDataSubs: Float!
@@ -112,8 +114,8 @@ type AccountEntity @entity {
   validatorSessionParticipated: Float
   createdAt: Date!
   updatedAt: Date!
-  timestampCreation: Date! 
-  address: String! 
+  timestampCreation: Date!
+  address: String!
   totalByteSize: Float!
   totalFees: Float
   totalDAFees: Float
@@ -196,7 +198,7 @@ type AppEntity @entity {
   creationRawData: String
   creationTxn: TransactionData
   timestampCreation: Date!
-  owner: String! 
+  owner: String!
   totalByteSize: Float!
   totalDAFees: Float
   totalDAFeesUSD: Float

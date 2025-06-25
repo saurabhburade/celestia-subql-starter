@@ -1,5 +1,5 @@
 import { toHex } from "@cosmjs/encoding";
-import { TxData } from "@subql/types-cosmos";
+import { CosmosTransaction, TxData } from "@subql/types-cosmos";
 const crypto = require("crypto");
 
 export interface TxStats {
@@ -19,16 +19,19 @@ export interface TxStats {
   signer: string; // Signer address, optional
   blobs: any[];
   index: number;
+  hash: string;
 }
 
-export const getDecodedTxData = (tx: TxData, index: number = 0): TxStats => {
+export const getDecodedTxData = (
+  txn: CosmosTransaction,
+  index: number = 0
+): TxStats => {
+  const tx = txn.tx;
   const code = tx?.code || 0;
   const codespace = tx?.codespace || "";
   const gasUsed = tx?.gasUsed ? Number(tx.gasUsed) : 0;
   const gasWanted = tx?.gasWanted ? Number(tx.gasWanted) : 0;
-  const buffer = tx.data;
-  const hash = crypto.createHash("sha256").update(buffer).digest();
-  logger.info(`SHA256::: ${hash.toString("hex")}`);
+
   const decodedData = tx?.events?.reduce(
     (acc: TxStats, v) => {
       acc.nEvents = tx?.events.length;
@@ -48,23 +51,6 @@ export const getDecodedTxData = (tx: TxData, index: number = 0): TxStats => {
           attr.value.toString(),
           "base64"
         ).toString("utf-8");
-        try {
-          const attrKey = Buffer.from(attr.key.toString(), "base64").toString(
-            "utf-8"
-          );
-
-          // logger.info(
-          //   `🚀 ~ decodeBlockTx.ts:55 ~ attr: ${decodedType} :: ${attrKey} :: ${
-          //     decodeAttrValue.length
-          //   } ::::  ${decodeAttrValue.length < 70 ? decodeAttrValue : ""}`
-          // );
-          const attrValue = Buffer.from(
-            attr.value.toString(),
-            "base64"
-          ).toString("utf-8");
-        } catch (error) {
-          logger.info(`BUFFER DECODE ERROR`);
-        }
 
         if (decodedType === "message") {
           if (decodeAttrKey === "sender") {
@@ -178,10 +164,12 @@ export const getDecodedTxData = (tx: TxData, index: number = 0): TxStats => {
       signer: "",
       blobs: [],
       index,
+      hash: txn.hash,
     }
   );
   return {
     ...decodedData,
-    index,
+    index: txn.idx,
+    hash: txn.hash,
   };
 };
