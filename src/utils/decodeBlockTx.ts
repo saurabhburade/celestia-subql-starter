@@ -28,7 +28,7 @@ export const getDecodedTxData = (tx: TxData, index: number = 0): TxStats => {
   const gasWanted = tx?.gasWanted ? Number(tx.gasWanted) : 0;
   const buffer = tx.data;
   const hash = crypto.createHash("sha256").update(buffer).digest();
-  logger.info(`SHA256::: ${hash}`);
+  logger.info(`SHA256::: ${hash.toString("hex")}`);
   const decodedData = tx?.events?.reduce(
     (acc: TxStats, v) => {
       acc.nEvents = tx?.events.length;
@@ -53,11 +53,11 @@ export const getDecodedTxData = (tx: TxData, index: number = 0): TxStats => {
             "utf-8"
           );
 
-          logger.info(
-            `🚀 ~ decodeBlockTx.ts:55 ~ attr: ${decodedType} :: ${attrKey} :: ${
-              decodeAttrValue.length
-            } ::::  ${decodeAttrValue.length < 70 ? decodeAttrValue : ""}`
-          );
+          // logger.info(
+          //   `🚀 ~ decodeBlockTx.ts:55 ~ attr: ${decodedType} :: ${attrKey} :: ${
+          //     decodeAttrValue.length
+          //   } ::::  ${decodeAttrValue.length < 70 ? decodeAttrValue : ""}`
+          // );
           const attrValue = Buffer.from(
             attr.value.toString(),
             "base64"
