@@ -43,7 +43,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
     id: height.toString(),
     avgNativePrice: priceData?.nativePrice!,
     currentNativePrice: priceData?.nativePrice!,
-    hash: block.header.consensusHash.toString(),
+    hash: block.block.id,
     height: height,
     proposer: block.header.proposerAddress.toString(),
     totalBlobSize: 0,
