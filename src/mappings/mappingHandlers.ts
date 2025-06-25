@@ -126,7 +126,6 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
       // blockHeight: BigInt(block.block.header.height),
       timestamp: block.block.header.time.getTime(),
       txFeeUSD: Number(decodedTx.txFee) * (priceData?.nativePrice || 0),
-      lastPriceFeedId: priceData!.id,
     });
     txnRecords.push(transactionRecord);
 
