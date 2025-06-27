@@ -147,13 +147,13 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
         const bEntity = BlobData.create({
           id: `${height}-${idx}-${idx2}`,
           data: blob,
-          namespaceID: blob.namespace || "",
+          namespaceID: blob?.namespace || "",
           // namespaceId: blob.namespace || "",
           transactionId: transactionRecord.id || "",
           namespaceVersion: blob.shareVersion || 0,
           shareVersion: blob.shareVersion || 0,
           commitment: blob.commitment || "",
-          size: blob.blob_size || 0,
+          size: blob?.blob_size || 0,
           signer: decodedTx.signer || "",
           index: idx2,
         });
