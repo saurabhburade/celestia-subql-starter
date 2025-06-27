@@ -120,7 +120,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
       isBlobTransaction: decodedTx?.totalBytes > 0 ? true : false,
       nDataSubs: decodedTx.nDataSubs,
       nMessages: decodedTx.nMessages,
-
+      index: tx.idx,
       totalBytes: decodedTx.totalBytes,
       nEvents: decodedTx.nEvents,
       txFeeNative: decodedTx.txFee,
@@ -145,7 +145,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
         const blob = decodedTx.blobs[idx2];
         const bEntity = BlobData.create({
           id: `${height}-${idx}-${idx2}`,
-          data: "",
+          data: blob,
           namespaceID: blob.namespace || "",
           // namespaceId: blob.namespace || "",
           transactionId: transactionRecord.id || "",
@@ -154,6 +154,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
           commitment: blob.commitment || "",
           size: blob.blob_size || 0,
           signer: decodedTx.signer || "",
+          index: idx2,
         });
         const appEntity = await handleApp(
           decodedTx,

@@ -56,6 +56,7 @@ type BlobData @entity {
   commitment: String
   size: Float
   signer: String
+  index: Int
 }
 
 type TransactionData @entity {
@@ -79,7 +80,7 @@ type TransactionData @entity {
   code: Float
   gasUsed: Float
   gasWanted: Float
-
+  index: Int
   isBlobTransaction: Boolean!
   blobs: [BlobData] @derivedFrom(field: "transaction")
 }
