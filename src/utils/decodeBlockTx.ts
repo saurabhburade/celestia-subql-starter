@@ -103,7 +103,7 @@ export const getDecodedTxData = (
             if (nameSpaces?.length > 0) {
               JSON.parse(nameSpaces).forEach((ns: string, idx: number) => {
                 const prev = bbs[idx] || {};
-                bbs[idx] = { ...prev, namespace: toHex(Buffer.from(ns)) };
+                bbs[idx] = { ...prev, namespace: toHex(Buffer.from(ns)).toString() };
               });
             }
             acc.namespaces = [...acc.namespaces, ...nameSpaces];
