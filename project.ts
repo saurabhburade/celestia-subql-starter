@@ -14,7 +14,7 @@ const project: CosmosProject = {
   runner: {
     node: {
       name: "@subql/node-cosmos",
-      version: ">=3.0.0",
+      version: ">=5.1.0",
     },
     query: {
       name: "@subql/query",
