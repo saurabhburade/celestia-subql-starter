@@ -145,7 +145,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
       for (let idx2 = 0; idx2 < decodedTx.blobs.length; idx2++) {
         const blob = decodedTx.blobs[idx2];
         const bEntity = BlobData.create({
-          id: `${height}-${idx}-${idx2}`,
+          id: `${height}-${blob?.commitment}`,
           data: blob,
           namespaceID: blob?.namespace || "",
           // namespaceId: blob.namespace || "",
@@ -295,6 +295,9 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
   //   store.bulkUpdate("TransactionData", txnRecords),
   //   bdata.save(),
   // ]);
+  await store.bulkUpdate("TransactionData", txnRecords);
+  await store.bulkUpdate("BlobData", blobs);
+  
   await store.bulkUpdate("CollectiveData", collectiveDataEntities);
   await store.bulkUpdate("CollectiveDayData", collectiveDayDatas);
   await store.bulkUpdate("CollectiveHourData", collectiveHourDatas);
@@ -307,8 +310,6 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
   await store.bulkUpdate("AccountDayData", accountDayDatas);
   await store.bulkUpdate("AccountHourData", accountHourDatas);
   // logger.info(`BEFORE BULK UPDATES:: BLOBS | TXNS`);
-  await store.bulkUpdate("BlobData", blobs);
-  await store.bulkUpdate("TransactionData", txnRecords);
   await bdata.save();
   // logger.info(`AFTER BULK UPDATES`);
 }
