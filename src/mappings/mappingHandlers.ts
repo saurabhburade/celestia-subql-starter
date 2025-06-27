@@ -106,7 +106,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
     collectiveDataEntities.push(collectiveData);
     collectiveDayDatas.push(collectiveDayData);
     collectiveHourDatas.push(collectiveHourData);
-    tx.tx.code;
+
     const transactionRecord = TransactionData.create({
       id: tx.hash,
       blockHeightId: height.toString(),
@@ -128,6 +128,7 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
       // blockHeight: BigInt(block.block.header.height),
       timestamp: block.block.header.time.getTime(),
       txFeeUSD: Number(decodedTx.txFee) * (priceData?.nativePrice || 0),
+      messages: decodedTx?.msgs || [],
     });
     txnRecords.push(transactionRecord);
 
