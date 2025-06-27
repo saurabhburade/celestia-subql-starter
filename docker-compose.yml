@@ -19,7 +19,7 @@ services:
       retries: 5
 
   subquery-node:
-    image: saurabhburade/subql-cosmos-node-test:v1.0.1
+    image: saurabhburade/subql-cosmos-node-test:v1.0.2
 
     restart: unless-stopped
     environment:
