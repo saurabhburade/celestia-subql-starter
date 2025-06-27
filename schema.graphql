@@ -68,13 +68,17 @@ type TransactionData @entity {
 
   amount: Float!
   denomination: String!
-
+  messages: [String]
   txFeeNative: Float!
   txFeeUSD: Float!
   nMessages: Float!
   nEvents: Float!
   nDataSubs: Float!
   totalBytes: Float!
+  codespace: String
+  code: Float
+  gasUsed: Float
+  gasWanted: Float
 
   isBlobTransaction: Boolean!
   blobs: [BlobData] @derivedFrom(field: "transaction")

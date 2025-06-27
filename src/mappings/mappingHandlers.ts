@@ -106,15 +106,17 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
     collectiveDataEntities.push(collectiveData);
     collectiveDayDatas.push(collectiveDayData);
     collectiveHourDatas.push(collectiveHourData);
-
+    tx.tx.code;
     const transactionRecord = TransactionData.create({
       id: tx.hash,
       blockHeightId: height.toString(),
-
+      code: tx.tx.code,
+      gasUsed: Number(tx.tx.gasUsed) || 0,
+      gasWanted: Number(tx.tx.gasWanted) || 0,
+      codespace: tx.tx.codespace || "",
       denomination: "tia",
       amount: decodedTx.txFee,
       hash: tx.hash,
-
       isBlobTransaction: decodedTx?.totalBytes > 0 ? true : false,
       nDataSubs: decodedTx.nDataSubs,
       nMessages: decodedTx.nMessages,

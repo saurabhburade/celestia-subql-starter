@@ -20,6 +20,7 @@ export interface TxStats {
   blobs: any[];
   index: number;
   hash: string;
+  msgs: string[];
 }
 
 export const getDecodedTxData = (
@@ -56,6 +57,11 @@ export const getDecodedTxData = (
           if (decodeAttrKey === "sender") {
             if (decodeAttrValue && decodeAttrValue !== "") {
               acc.signer = decodeAttrValue;
+            }
+          }
+          if (decodeAttrKey === "action") {
+            if (decodeAttrValue && decodeAttrValue !== "") {
+              acc.msgs.push(decodeAttrValue);
             }
           }
           acc.nMessages += 1;
@@ -163,6 +169,7 @@ export const getDecodedTxData = (
       gasWanted: gasWanted,
       signer: "",
       blobs: [],
+      msgs: [],
       index,
       hash: txn.hash,
     }
