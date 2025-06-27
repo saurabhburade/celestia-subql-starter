@@ -130,7 +130,7 @@ export const getDecodedTxData = (
             const blobSizes = JSON.parse(decodeAttrValue)?.reduce(
               (sum: number, attrV: number | string, idx: number) => {
                 const prev = bbs[idx] || {};
-                bbs[idx] = { ...prev, blob_size: attrV };
+                bbs[idx] = { ...prev, blob_size: Number(attrV) };
                 return sum + Number(attrV);
               },
               0
