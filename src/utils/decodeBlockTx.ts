@@ -1,5 +1,6 @@
 import { toHex } from "@cosmjs/encoding";
 import { CosmosTransaction, TxData } from "@subql/types-cosmos";
+import { parseCelestiaString } from "./utils";
 const crypto = require("crypto");
 
 export interface TxStats {
@@ -56,7 +57,7 @@ export const getDecodedTxData = (
         if (decodedType === "message") {
           if (decodeAttrKey === "sender") {
             if (decodeAttrValue && decodeAttrValue !== "") {
-              acc.signer = decodeAttrValue;
+              acc.signer = parseCelestiaString(decodeAttrValue);
             }
           }
           if (decodeAttrKey === "action") {
@@ -87,12 +88,12 @@ export const getDecodedTxData = (
         }
         if (decodeAttrKey === "signer") {
           if (decodeAttrValue && decodeAttrValue !== "") {
-            acc.signer = decodeAttrValue;
+            acc.signer = parseCelestiaString(decodeAttrValue);
           }
         }
         if (decodeAttrKey === "Signer") {
           if (decodeAttrValue && decodeAttrValue !== "") {
-            acc.signer = decodeAttrValue;
+            acc.signer = parseCelestiaString(decodeAttrValue);
           }
         }
         if (decodedType === "celestia.blob.v1.EventPayForBlobs") {
@@ -105,7 +106,9 @@ export const getDecodedTxData = (
                 const prev = bbs[idx] || {};
                 bbs[idx] = {
                   ...prev,
-                  namespace: toHex(Buffer.from(ns))?.toString(),
+                  namespace: toHex(
+                    Buffer.from(parseCelestiaString(ns))
+                  )?.toString(),
                 };
               });
             }
