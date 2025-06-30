@@ -20,7 +20,7 @@ export async function handleCollective(
     let dataSubmissionSize = decodedTxn.totalBytes ? decodedTxn?.totalBytes : 0;
 
     const id = "1";
-    const txnId = `${block.height}-${decodedTxn?.index}`;
+    const txnId = decodedTxn.hash;
     let collectiveEntity = await CollectiveData.get(id);
 
     if (collectiveEntity === undefined || collectiveEntity === null) {
@@ -113,7 +113,7 @@ export async function handleCollectiveDayData(
 
     const id = `${dayId}`;
     const previd = `${prevDayId}`;
-    const txnId = `${block.height}-${decodedTxn?.index}`;
+    const txnId = decodedTxn.hash;
 
     let collectiveDayEntity = await CollectiveDayData.get(id);
 
@@ -215,7 +215,7 @@ export async function handleCollectiveHourData(
 
     const id = `${hourId}`;
     const previd = `${prevHourId}`;
-    const txnId = `${block.height}-${decodedTxn?.index}`;
+    const txnId = decodedTxn.hash;
 
     let collectiveHourEntity = await CollectiveHourData.get(id);
 

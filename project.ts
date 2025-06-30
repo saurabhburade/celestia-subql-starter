@@ -14,7 +14,7 @@ const project: CosmosProject = {
   runner: {
     node: {
       name: "@subql/node-cosmos",
-      version: ">=3.0.0",
+      version: ">=5.1.0",
     },
     query: {
       name: "@subql/query",
@@ -38,7 +38,11 @@ const project: CosmosProject = {
     endpoint: [
       "https://celestia.cumulo.org.es",
       "https://public-celestia-rpc.numia.xyz",
-      // "https://celestia-rpc.mesa.newmetric.xyz",
+      "https://rpc.archive.celestia.mainnet.dteam.tech",
+      "https://celestia-mainnet-rpc.itrocket.net",
+      "https://celestia-rpc.stakeme.pro/",
+      "https://celestia-rpc.0xcryptovestor.com/",
+      "https://celestia-rpc.f5nodes.com/",
     ],
     chaintypes: new Map([
       [

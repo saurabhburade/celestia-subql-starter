@@ -14,12 +14,12 @@ services:
 
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
+      interval: 15s
       timeout: 5s
       retries: 5
 
   subquery-node:
-    image: saurabhburade/subql-cosmos-node-test:v1.0.1
+    image: saurabhburade/subql-cosmos-node-test:v1.0.2
 
     restart: unless-stopped
     environment:
@@ -34,15 +34,15 @@ services:
       - ${SUB_COMMAND:-} # set SUB_COMMAND env variable to "test" to run tests
       - -f=/app
       - --db-schema=app
-      - --workers=5
-      - --batch-size=50
+      - --workers=8
+      - --batch-size=10
       - --unsafe=true
       - --allow-schema-migration
       - --scale-batch-size
       - --unfinalized-blocks=false
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node:3000/ready"]
-      interval: 3s
+      interval: 13s
       timeout: 60s
       retries: 10
 
