@@ -41,7 +41,6 @@ const project: CosmosProject = {
       "https://rpc.archive.celestia.mainnet.dteam.tech",
       "https://celestia-mainnet-rpc.itrocket.net",
       "https://celestia-rpc.stakeme.pro/",
-      "https://celestia-rpc.0xcryptovestor.com/",
       "https://celestia-rpc.f5nodes.com/",
     ],
     chaintypes: new Map([
