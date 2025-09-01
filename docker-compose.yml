@@ -11,6 +11,16 @@ services:
       - .data/postgres:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    command: >
+      postgres
+      -c shared_buffers=1GB
+      -c effective_cache_size=2GB
+      -c maintenance_work_mem=512MB
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=64MB
+      -c synchronous_commit=${PG_SYNCHRONOUS_COMMIT:-on}
+      -c fsync=${PG_FSYNC:-on}
+      -c full_page_writes=${PG_FULL_PAGE_WRITES:-on}
 
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]

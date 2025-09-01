@@ -59,11 +59,10 @@ export async function handleApp(
       appEntity.lastUpdatedTxnId = blob.transactionId!;
       appEntity.totalTxnCount += 1;
 
-      const fees = Number(decodedTxn.txFee);
+      const fees = decodedTxn.txFee;
       const feesUSD = fees * priceFeed.nativePrice;
       if (decodedTxn?.blobs?.length > 0) {
-        appEntity.totalDAFees =
-          appEntity.totalDAFees! + Number(decodedTxn.txFee)!;
+        appEntity.totalDAFees = appEntity.totalDAFees! + decodedTxn.txFee;
         appEntity.totalDAFeesUSD = appEntity.totalDAFeesUSD! + feesUSD;
         appEntity.totalDataSubmissionCount =
           appEntity.totalDataSubmissionCount! + 1;
@@ -71,10 +70,9 @@ export async function handleApp(
         appEntity.totalByteSize =
           appEntity.totalByteSize + Number(dataSubmissionSize);
       }
-      appEntity.totalFeesNative =
-        appEntity.totalFeesNative! + Number(decodedTxn.txFee!);
+      appEntity.totalFeesNative = appEntity.totalFeesNative! + decodedTxn.txFee;
 
-      appEntity.totalFeesUSD = appEntity.totalFeesUSD! + Number(feesUSD);
+      appEntity.totalFeesUSD = appEntity.totalFeesUSD! + feesUSD;
     }
     appEntity.timestampLast = new Date(block.timestamp);
 
@@ -160,11 +158,10 @@ export async function handleAppDayData(
       appDayEntity.lastUpdatedTxnId = blob.transactionId!;
       appDayEntity.totalTxnCount! += 1;
 
-      const fees = Number(decodedTxn.txFee);
+      const fees = decodedTxn.txFee;
       const feesUSD = fees * priceFeed.nativePrice;
       if (decodedTxn?.blobs?.length > 0) {
-        appDayEntity.totalDAFees =
-          appDayEntity.totalDAFees! + Number(decodedTxn.txFee)!;
+        appDayEntity.totalDAFees = appDayEntity.totalDAFees! + decodedTxn.txFee;
         appDayEntity.totalDAFeesUSD = appDayEntity.totalDAFeesUSD! + feesUSD;
         appDayEntity.totalDataSubmissionCount =
           appDayEntity.totalDataSubmissionCount! + 1;
@@ -173,9 +170,9 @@ export async function handleAppDayData(
           appDayEntity.totalByteSize + Number(dataSubmissionSize);
       }
       appDayEntity.totalFeesNative =
-        appDayEntity.totalFeesNative! + Number(decodedTxn.txFee!);
+        appDayEntity.totalFeesNative! + decodedTxn.txFee;
 
-      appDayEntity.totalFeesUSD = appDayEntity.totalFeesUSD! + Number(feesUSD);
+      appDayEntity.totalFeesUSD = appDayEntity.totalFeesUSD! + feesUSD;
     }
     appDayEntity.timestampLast = new Date(block.timestamp);
 
@@ -263,11 +260,11 @@ export async function handleAppHourData(
       appHourEntity.lastUpdatedTxnId = blob.transactionId!;
       appHourEntity.totalTxnCount! += 1;
 
-      const fees = Number(decodedTxn.txFee);
+      const fees = decodedTxn.txFee;
       const feesUSD = fees * priceFeed.nativePrice;
       if (decodedTxn?.blobs?.length > 0) {
         appHourEntity.totalDAFees =
-          appHourEntity.totalDAFees! + Number(decodedTxn.txFee)!;
+          appHourEntity.totalDAFees! + decodedTxn.txFee;
         appHourEntity.totalDAFeesUSD = appHourEntity.totalDAFeesUSD! + feesUSD;
         appHourEntity.totalDataSubmissionCount =
           appHourEntity.totalDataSubmissionCount! + 1;
@@ -276,10 +273,9 @@ export async function handleAppHourData(
           appHourEntity.totalByteSize + Number(dataSubmissionSize);
       }
       appHourEntity.totalFeesNative =
-        appHourEntity.totalFeesNative! + Number(decodedTxn.txFee!);
+        appHourEntity.totalFeesNative! + decodedTxn.txFee;
 
-      appHourEntity.totalFeesUSD =
-        appHourEntity.totalFeesUSD! + Number(feesUSD);
+      appHourEntity.totalFeesUSD = appHourEntity.totalFeesUSD! + feesUSD;
     }
     appHourEntity.timestampLast = new Date(block.timestamp);
 

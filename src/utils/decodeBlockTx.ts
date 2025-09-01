@@ -1,7 +1,6 @@
 import { toHex } from "@cosmjs/encoding";
 import { CosmosTransaction, TxData } from "@subql/types-cosmos";
 import { parseCelestiaString } from "./utils";
-const crypto = require("crypto");
 
 export interface TxStats {
   nMessages: number; // Number of messages
@@ -83,7 +82,9 @@ export const getDecodedTxData = (
         if (decodedType === "tx") {
           if (decodeAttrKey === "fee") {
             const [fee] = decodeAttrValue?.split("utia");
-            acc.txFee += Number(Number(fee) / 1e6);
+            if (!isNaN(Number(fee)) && Number(fee) / 1e6 > 0) {
+              acc.txFee += Number(fee) / 1e6;
+            }
           }
         }
         if (decodeAttrKey === "signer") {
@@ -182,7 +183,7 @@ export const getDecodedTxData = (
   );
   return {
     ...decodedData,
-    index: txn.idx,
+    index,
     hash: txn.hash,
   };
 };
