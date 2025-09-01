@@ -1,7 +1,6 @@
 import { toHex } from "@cosmjs/encoding";
 import { CosmosTransaction, TxData } from "@subql/types-cosmos";
 import { parseCelestiaString } from "./utils";
-const crypto = require("crypto");
 
 export interface TxStats {
   nMessages: number; // Number of messages
@@ -184,7 +183,7 @@ export const getDecodedTxData = (
   );
   return {
     ...decodedData,
-    index: txn.idx,
+    index,
     hash: txn.hash,
   };
 };

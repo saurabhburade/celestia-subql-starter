@@ -65,8 +65,7 @@ export async function handleCollective(
       collectiveEntity.totalFeesNative =
         collectiveEntity.totalFeesNative! + decodedTxn.txFee;
 
-      collectiveEntity.totalFeesUSD =
-        collectiveEntity.totalFeesUSD! + Number(feesUSD);
+      collectiveEntity.totalFeesUSD = collectiveEntity.totalFeesUSD! + feesUSD;
     }
     collectiveEntity.timestampLast = new Date(block.timestamp);
 
@@ -167,7 +166,7 @@ export async function handleCollectiveDayData(
         collectiveDayEntity.totalFeesNative! + decodedTxn.txFee;
 
       collectiveDayEntity.totalFeesUSD =
-        collectiveDayEntity.totalFeesUSD! + Number(feesUSD);
+        collectiveDayEntity.totalFeesUSD! + feesUSD;
     }
     collectiveDayEntity.timestampLast = new Date(block.timestamp);
 
@@ -269,7 +268,7 @@ export async function handleCollectiveHourData(
         collectiveHourEntity.totalFeesNative! + decodedTxn.txFee;
 
       collectiveHourEntity.totalFeesUSD =
-        collectiveHourEntity.totalFeesUSD! + Number(feesUSD);
+        collectiveHourEntity.totalFeesUSD! + feesUSD;
     }
     collectiveHourEntity.timestampLast = new Date(block.timestamp);
 

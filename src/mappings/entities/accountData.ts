@@ -83,7 +83,7 @@ export async function handleAccount(
     accountEntity.totalFees = accountEntity.totalFees! + decodedTxn.txFee;
     accountEntity.totalFeesNative =
       accountEntity.totalFeesNative! + decodedTxn.txFee;
-    accountEntity.totalFeesUSD = accountEntity.totalFeesUSD! + Number(feesUSD);
+    accountEntity.totalFeesUSD = accountEntity.totalFeesUSD! + feesUSD;
     accountEntity.lastPriceFeedId = priceFeed.id;
     accountEntity.endBlock = block.height;
     // logger.info(`New ACCOUNT SAVE::::::  ${JSON.stringify(accountEntity.id)}`);
@@ -166,8 +166,7 @@ export async function handleAccountDayData(
   const fees = decodedTxn.txFee;
   const feesUSD = fees * priceFeed.nativePrice;
   if (decodedTxn?.blobs?.length > 0) {
-    accountDayDataRecord.totalDAFees =
-      accountDayDataRecord.totalDAFees! + Number(fees)!;
+    accountDayDataRecord.totalDAFees = accountDayDataRecord.totalDAFees! + fees;
     accountDayDataRecord.totalDAFeesUSD =
       accountDayDataRecord.totalDAFeesUSD! + feesUSD;
     accountDayDataRecord.totalDataSubmissionCount =
@@ -184,12 +183,11 @@ export async function handleAccountDayData(
       accountDayDataRecord.totalBlocksCount! + 1;
   }
   accountDayDataRecord.totalTxnCount = accountDayDataRecord.totalTxnCount! + 1;
-  accountDayDataRecord.totalFees =
-    accountDayDataRecord.totalFees! + Number(fees!);
+  accountDayDataRecord.totalFees = accountDayDataRecord.totalFees! + fees;
   accountDayDataRecord.totalFeesNative =
-    accountDayDataRecord.totalFeesNative! + Number(fees!);
+    accountDayDataRecord.totalFeesNative! + fees;
   accountDayDataRecord.totalFeesUSD =
-    accountDayDataRecord.totalFeesUSD! + Number(feesUSD);
+    accountDayDataRecord.totalFeesUSD! + feesUSD;
   accountDayDataRecord.lastPriceFeedId = priceFeed.id;
   accountDayDataRecord.endBlock = block.height;
 
@@ -266,7 +264,7 @@ export async function handleAccountHourData(
   const feesUSD = fees * priceFeed.nativePrice;
   if (decodedTxn?.blobs?.length > 0) {
     accountHourDataRecord.totalDAFees =
-      accountHourDataRecord.totalDAFees! + Number(fees)!;
+      accountHourDataRecord.totalDAFees! + fees;
     accountHourDataRecord.totalDAFeesUSD =
       accountHourDataRecord.totalDAFeesUSD! + feesUSD;
     accountHourDataRecord.totalDataSubmissionCount =
@@ -284,12 +282,11 @@ export async function handleAccountHourData(
   }
   accountHourDataRecord.totalTxnCount =
     accountHourDataRecord.totalTxnCount! + 1;
-  accountHourDataRecord.totalFees =
-    accountHourDataRecord.totalFees! + Number(fees!);
+  accountHourDataRecord.totalFees = accountHourDataRecord.totalFees! + fees;
   accountHourDataRecord.totalFeesNative =
-    accountHourDataRecord.totalFeesNative! + Number(fees!);
+    accountHourDataRecord.totalFeesNative! + fees;
   accountHourDataRecord.totalFeesUSD =
-    accountHourDataRecord.totalFeesUSD! + Number(feesUSD);
+    accountHourDataRecord.totalFeesUSD! + feesUSD;
   accountHourDataRecord.lastPriceFeedId = priceFeed.id;
   accountHourDataRecord.endBlock = block.height;
 
