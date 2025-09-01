@@ -82,8 +82,8 @@ export const getDecodedTxData = (
         if (decodedType === "tx") {
           if (decodeAttrKey === "fee") {
             const [fee] = decodeAttrValue?.split("utia");
-            if (!isNaN(Number(fee)) && Number(Number(fee) / 1e6) > 0) {
-              acc.txFee += Number(Number(fee) / 1e6);
+            if (!isNaN(Number(fee)) && Number(fee) / 1e6 > 0) {
+              acc.txFee += Number(fee) / 1e6;
             }
           }
         }
