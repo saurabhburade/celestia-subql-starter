@@ -61,11 +61,10 @@ export async function handleAccount(
 
     // const extrinsicType = `${decodedTxn.}_${methodData.method}`;
     const isDataSubmission = decodedTxn.blobs.length > 0;
-    const fees = Number(decodedTxn.txFee);
+    const fees = decodedTxn.txFee;
     const feesUSD = fees * priceFeed.nativePrice;
     if (isDataSubmission) {
-      accountEntity.totalDAFees =
-        accountEntity.totalDAFees! + Number(decodedTxn.txFee)!;
+      accountEntity.totalDAFees = accountEntity.totalDAFees! + decodedTxn.txFee;
       accountEntity.totalDAFeesUSD = accountEntity.totalDAFeesUSD! + feesUSD;
       accountEntity.totalDataSubmissionCount =
         accountEntity.totalDataSubmissionCount! + 1;
@@ -81,10 +80,9 @@ export async function handleAccount(
       accountEntity.totalBlocksCount = accountEntity.totalBlocksCount! + 1;
     }
     accountEntity.totalTxnCount = accountEntity.totalTxnCount! + 1;
-    accountEntity.totalFees =
-      accountEntity.totalFees! + Number(decodedTxn.txFee!);
+    accountEntity.totalFees = accountEntity.totalFees! + decodedTxn.txFee;
     accountEntity.totalFeesNative =
-      accountEntity.totalFeesNative! + Number(decodedTxn.txFee!);
+      accountEntity.totalFeesNative! + decodedTxn.txFee;
     accountEntity.totalFeesUSD = accountEntity.totalFeesUSD! + Number(feesUSD);
     accountEntity.lastPriceFeedId = priceFeed.id;
     accountEntity.endBlock = block.height;
@@ -165,7 +163,7 @@ export async function handleAccountDayData(
   accountDayDataRecord.avgNativePrice =
     (accountDayDataRecord.avgNativePrice! + priceFeed.nativePrice) / 2;
 
-  const fees = Number(decodedTxn.txFee);
+  const fees = decodedTxn.txFee;
   const feesUSD = fees * priceFeed.nativePrice;
   if (decodedTxn?.blobs?.length > 0) {
     accountDayDataRecord.totalDAFees =
@@ -176,16 +174,12 @@ export async function handleAccountDayData(
       accountDayDataRecord.totalDataSubmissionCount! + 1;
     accountDayDataRecord.totalByteSize =
       accountDayDataRecord.totalByteSize + Number(dataSubmissionSize);
-    if (
-      accountDayDataRecord.endBlock!.toString() != block.height.toString()
-    ) {
+    if (accountDayDataRecord.endBlock!.toString() != block.height.toString()) {
       accountDayDataRecord.totalDataBlocksCount =
         accountDayDataRecord.totalDataBlocksCount! + 1;
     }
   }
-  if (
-    accountDayDataRecord.endBlock!.toString() != block.height.toString()
-  ) {
+  if (accountDayDataRecord.endBlock!.toString() != block.height.toString()) {
     accountDayDataRecord.totalBlocksCount =
       accountDayDataRecord.totalBlocksCount! + 1;
   }
@@ -268,7 +262,7 @@ export async function handleAccountHourData(
   accountHourDataRecord.avgNativePrice =
     (accountHourDataRecord.avgNativePrice! + priceFeed.nativePrice) / 2;
 
-  const fees = Number(decodedTxn.txFee);
+  const fees = decodedTxn.txFee;
   const feesUSD = fees * priceFeed.nativePrice;
   if (decodedTxn?.blobs?.length > 0) {
     accountHourDataRecord.totalDAFees =
@@ -279,17 +273,12 @@ export async function handleAccountHourData(
       accountHourDataRecord.totalDataSubmissionCount! + 1;
     accountHourDataRecord.totalByteSize =
       accountHourDataRecord.totalByteSize + Number(dataSubmissionSize);
-    if (
-      accountHourDataRecord.endBlock!.toString() !=
-      block.height.toString()
-    ) {
+    if (accountHourDataRecord.endBlock!.toString() != block.height.toString()) {
       accountHourDataRecord.totalDataBlocksCount =
         accountHourDataRecord.totalDataBlocksCount! + 1;
     }
   }
-  if (
-    accountHourDataRecord.endBlock!.toString() != block.height.toString()
-  ) {
+  if (accountHourDataRecord.endBlock!.toString() != block.height.toString()) {
     accountHourDataRecord.totalBlocksCount =
       accountHourDataRecord.totalBlocksCount! + 1;
   }
