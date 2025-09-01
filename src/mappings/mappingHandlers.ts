@@ -342,8 +342,8 @@ export async function handleBlock(block: CosmosBlock): Promise<void> {
     // store.bulkUpdate("AccountDayData", accountDayDatas),
     // store.bulkUpdate("AccountHourData", accountHourDatas),
 
-    store.bulkUpdate("TransactionData", txnRecords),
-    store.bulkUpdate("BlobData", blobs),
+    store.bulkCreate("TransactionData", txnRecords),
+    store.bulkCreate("BlobData", blobs),
     bdata.save(),
   ]);
   // // logger.info(`BEFORE BULK UPDATES :: APPS`);
